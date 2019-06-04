@@ -1,0 +1,240 @@
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN" class="translated-ltr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>第19章MySQL Shell</title>
+		<link rel="stylesheet" href="mvl.css" type="text/css">
+		<meta name="generator" content="DocBook XSL Stylesheets + chunker.py v1.9.2">
+		<link rel="start" href="index.html" title="{书名}">
+		<link rel="up" href="" title="">
+		<link rel="prev" href="group-replication.html" title="第18章组复制">
+		<link rel="next" href="document-store.html" title="第20章将MySQL用作文档存储">
+		 
+		<link type="text/css" rel="stylesheet" charset="UTF-8" href="https://translate.googleapis.com/translate_static/css/translateelement.css">
+	</head>
+
+	<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+		<div class="navheader">
+			<table width="100%" summary="Navigation header">
+				<tbody>
+					<tr>
+						<th colspan="3" align="center">
+							<font style="vertical-align: inherit;">
+								<font style="vertical-align: inherit;">第19章MySQL Shell</font>
+							</font>
+						</th>
+					</tr>
+					<tr>
+						<td width="20%" align="left"><a accesskey="p" href="group-replication.html">
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">上一页</font>
+								</font>
+							</a>&nbsp;</td>
+						<th width="60%" align="center"></th>
+						<td width="20%" align="right">&nbsp;<a accesskey="n" href="document-store.html">
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">下一个</font>
+								</font>
+							</a></td>
+					</tr>
+				</tbody>
+			</table>
+			<hr>
+		</div>
+		<div class="chapter">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h1 class="title"><a name="mysql-shell-userguide"></a>
+							<font style="vertical-align: inherit;">
+								<font style="vertical-align: inherit;">第19章MySQL Shell</font>
+							</font>
+						</h1>
+
+					</div>
+
+				</div>
+
+			</div>
+			<p>
+				<font style="vertical-align: inherit;">
+					<font style="vertical-align: inherit;">
+						MySQL Shell是MySQL Server的高级客户端和代码编辑器。</font>
+					<font style="vertical-align: inherit;">除了提供的SQL功能，类似于
+					</font>
+				</font><a class="link" href="programs.html#mysql" title="4.5.1 mysql  -  MySQL命令行客户端"><span class="command"><strong>
+							<font style="vertical-align: inherit;">
+								<font style="vertical-align: inherit;">mysql</font>
+							</font>
+						</strong></span></a>
+				<font style="vertical-align: inherit;">
+					<font style="vertical-align: inherit;">，MySQL Shell还提供了JavaScript和Python的脚本功能，并包含用于MySQL的API。
+					</font>
+				</font>
+			</p>
+			<p>
+				<font style="vertical-align: inherit;">
+					<font style="vertical-align: inherit;">
+						以下讨论简要介绍了MySQL Shell的功能。</font>
+					<font style="vertical-align: inherit;">有关更多信息，请参阅</font>
+				</font><a class="ulink" href="https://dev.mysql.com/doc/mysql-shell/en/" target="_top">
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">https://dev.mysql.com/doc/mysql-shell/en/上</font>
+					</font>
+				</a>
+				<font style="vertical-align: inherit;">
+					<font style="vertical-align: inherit;">的MySQL Shell手册</font>
+					<font style="vertical-align: inherit;">。
+					</font>
+				</font>
+			</p>
+			<p>
+				<font style="vertical-align: inherit;">
+					<font style="vertical-align: inherit;">
+						MySQL Shell包含以下用JavaScript和Python实现的API，您可以使用它们来开发与MySQL交互的代码。
+					</font>
+				</font>
+			</p>
+			<div class="itemizedlist">
+				<ul class="itemizedlist" style="list-style-type: disc; ">
+					<li class="listitem">
+						<p>
+							<font style="vertical-align: inherit;">
+								<font style="vertical-align: inherit;">
+									当MySQL Shell使用X协议连接到MySQL服务器时，X DevAPI使您可以使用关系数据和文档数据。</font>
+								<font style="vertical-align: inherit;">有关更多信息，请参见
+								</font>
+							</font><a class="xref" href="document-store.html" title="第20章将MySQL用作文档存储">
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">第20章，</font>
+								</font><i>
+									<font style="vertical-align: inherit;">
+										<font style="vertical-align: inherit;">将MySQL用作文档存储</font>
+									</font>
+								</i>
+							</a>
+							<font style="vertical-align: inherit;">
+								<font style="vertical-align: inherit;">。</font>
+								<font style="vertical-align: inherit;">有关X DevAPI的概念和用法的文档，请参阅
+								</font>
+							</font><a class="ulink" href="https://dev.mysql.com/doc/x-devapi-userguide/en/" target="_top">
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">X DevAPI用户指南</font>
+								</font>
+							</a>
+							<font style="vertical-align: inherit;">
+								<font style="vertical-align: inherit;">。
+								</font>
+							</font>
+						</p>
+					</li>
+					<li class="listitem">
+						<p>
+							<font style="vertical-align: inherit;">
+								<font style="vertical-align: inherit;">
+									AdminAPI使您能够使用InnoDB集群，该集群使用基于InnoDB的MySQL数据库提供高可用性和可扩展性的集成解决方案，而无需高级MySQL专业知识。</font>
+								<font style="vertical-align: inherit;">请参见
+								</font>
+							</font><a class="xref" href="mysql-innodb-cluster-userguide.html" title="第21章InnoDB集群">
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">第21章，</font>
+								</font><i>
+									<font style="vertical-align: inherit;">
+										<font style="vertical-align: inherit;">InnoDB群集</font>
+									</font>
+								</i>
+							</a>
+							<font style="vertical-align: inherit;">
+								<font style="vertical-align: inherit;">。
+								</font>
+							</font>
+						</p>
+					</li>
+				</ul>
+			</div>
+			<p>
+				<font style="vertical-align: inherit;">
+					<font style="vertical-align: inherit;">
+						MySQL Shell有两个版本，Community Edition和Commercial Edition。</font>
+					<font style="vertical-align: inherit;">社区版免费提供。</font>
+					<font style="vertical-align: inherit;">商业版以低成本提供额外的企业功能。
+					</font>
+				</font>
+			</p>
+		</div>
+		<div class="copyright-footer">
+
+		</div>
+		<div class="navfooter">
+			<hr>
+			<table width="100%" summary="Navigation footer">
+				<tbody>
+					<tr>
+						<td width="40%" align="left"><a accesskey="p" href="group-replication.html">
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">上一页</font>
+								</font>
+							</a></td>
+						<td width="20%" align="center"><a accesskey="u" href="">
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">向上</font>
+								</font>
+							</a></td>
+						<td width="40%" align="right">&nbsp;<a accesskey="n" href="document-store.html">
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">下一个</font>
+								</font>
+							</a></td>
+					</tr>
+					<tr>
+						<td width="40%" align="left" valign="top">
+							<font style="vertical-align: inherit;">
+								<font style="vertical-align: inherit;">第18章组复制</font>
+							</font>
+						</td>
+						<td width="20%" align="center"><a accesskey="h" href="index.html">
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">家</font>
+								</font>
+							</a></td>
+						<td width="40%" align="right" valign="top">
+							<font style="vertical-align: inherit;">
+								<font style="vertical-align: inherit;">第20章将MySQL用作文档存储</font>
+							</font>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+
+		<div id="goog-gt-tt" class="skiptranslate" dir="ltr">
+			<div style="padding: 8px;">
+				<div>
+					<div class="logo"><img src="https://www.gstatic.com/images/branding/product/1x/translate_24dp.png" width="20"
+						 height="20" alt="Google 翻译"></div>
+				</div>
+			</div>
+			<div class="top" style="padding: 8px; float: left; width: 100%;">
+				<h1 class="title gray">原文</h1>
+			</div>
+			<div class="middle" style="padding: 8px;">
+				<div class="original-text"></div>
+			</div>
+			<div class="bottom" style="padding: 8px;">
+				<div class="activity-links"><span class="activity-link">提供更好的翻译建议</span><span class="activity-link"></span></div>
+				<div class="started-activity-container">
+					<hr style="color: #CCC; background-color: #CCC; height: 1px; border: none;">
+					<div class="activity-root"></div>
+				</div>
+			</div>
+			<div class="status-message" style="display: none;"></div>
+		</div>
+		<div id="cntvlive2-is-installed"></div>
+		<div class="goog-te-spinner-pos">
+			<div class="goog-te-spinner-animation"><svg xmlns="http://www.w3.org/2000/svg" class="goog-te-spinner" width="96px"
+				 height="96px" viewBox="0 0 66 66">
+					<circle class="goog-te-spinner-path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
+				</svg></div>
+		</div>
+	</body>
+</html>

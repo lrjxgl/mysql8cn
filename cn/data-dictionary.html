@@ -1,0 +1,764 @@
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN" class="translated-ltr"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>第14章MySQL数据字典</title>
+<link rel="stylesheet" href="mvl.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets + chunker.py v1.9.2">
+<link rel="start" href="index.html" title="{书名}">
+<link rel="up" href="" title="">
+<link rel="prev" href="sql-syntax.html" title="第13章SQL语句语法">
+<link rel="next" href="innodb-storage-engine.html" title="第15章InnoDB存储引擎">
+<script>
+		setInterval(function(){
+			console.log("ss")
+			document.documentElement.scrollTop+=200;
+		},1000)
+	</script>
+<link type="text/css" rel="stylesheet" charset="UTF-8" href="https://translate.googleapis.com/translate_static/css/translateelement.css"></head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tbody><tr>
+<th colspan="3" align="center"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">第14章MySQL数据字典</font></font></th>
+</tr>
+<tr>
+<td width="20%" align="left"><a accesskey="p" href="sql-syntax.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">上一页</font></font></a>&nbsp;</td>
+<th width="60%" align="center"></th>
+<td width="20%" align="right">&nbsp;<a accesskey="n" href="innodb-storage-engine.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">下一个</font></font></a></td>
+</tr>
+</tbody></table>
+<hr>
+</div>
+<div class="chapter">
+<div class="titlepage">
+<div>
+<div>
+<h1 class="title"><a name="data-dictionary"></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">第14章MySQL数据字典</font></font></h1>
+
+</div>
+
+</div>
+
+</div>
+<div class="toc">
+<p><b><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">目录</font></font></b></p><dl class="toc"><dt><span class="section"><a href="data-dictionary.html#data-dictionary-schema"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">14.1数据字典模式</font></font></a></span></dt><dt><span class="section"><a href="data-dictionary.html#data-dictionary-file-removal"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">14.2删除基于文件的元数据存储</font></font></a></span></dt><dt><span class="section"><a href="data-dictionary.html#data-dictionary-transactional-storage"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">14.3字典数据的事务存储</font></font></a></span></dt><dt><span class="section"><a href="data-dictionary.html#data-dictionary-object-cache"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">14.4字典对象缓存</font></font></a></span></dt><dt><span class="section"><a href="data-dictionary.html#data-dictionary-information-schema"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">14.5 INFORMATION_SCHEMA和数据字典集成</font></font></a></span></dt><dt><span class="section"><a href="data-dictionary.html#serialized-dictionary-information"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">14.6序列化字典信息（SDI）</font></font></a></span></dt><dt><span class="section"><a href="data-dictionary.html#data-dictionary-usage-differences"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">14.7数据字典使用差异</font></font></a></span></dt><dt><span class="section"><a href="data-dictionary.html#data-dictionary-limitations"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">14.8数据字典限制</font></font></a></span></dt></dl>
+</div>
+<a class="indexterm" name="idm140091653586768"></a><a class="indexterm" name="idm140091653585696"></a><p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+    MySQL Server包含一个事务数据字典，用于存储有关数据库对象的信息。</font><font style="vertical-align: inherit;">在以前的MySQL版本中，字典数据存储在元数据文件，非事务表和存储引擎特定的数据字典中。
+  </font></font></p><p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+    本章介绍数据字典的主要功能，优点，用法差异和限制。</font><font style="vertical-align: inherit;">有关数据字典功能的其他含义，请参阅</font><a class="ulink" href="https://dev.mysql.com/doc/relnotes/mysql/8.0/en/" target="_top"><font style="vertical-align: inherit;">MySQL 8.0发行说明中</font></a><font style="vertical-align: inherit;">的
+     </font></font><span class="quote"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">“ </font></font><span class="quote"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">数据字典说明</font></font></span><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> ”</font></font></span><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">部分
+     </font><font style="vertical-align: inherit;">。
+  </font></font><a class="ulink" href="https://dev.mysql.com/doc/relnotes/mysql/8.0/en/" target="_top"><font style="vertical-align: inherit;"></font></a><font style="vertical-align: inherit;"></font></p><p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+    MySQL数据字典的好处包括：
+</font></font></p><a class="indexterm" name="idm140091653581696"></a>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+        统一存储字典数据的集中式数据字典模式的简单性。</font><font style="vertical-align: inherit;">请参见
+         </font></font><a class="xref" href="data-dictionary.html#data-dictionary-schema" title="14.1数据字典模式"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">第14.1节“数据字典模式”</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。
+      </font></font></p></li><li class="listitem"><p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+        删除基于文件的元数据存储。</font><font style="vertical-align: inherit;">请参见
+         </font></font><a class="xref" href="data-dictionary.html#data-dictionary-file-removal" title="14.2删除基于文件的元数据存储"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">第14.2节“删除基于文件的元数据存储”</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。
+      </font></font></p></li><li class="listitem"><p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+        字典数据的事务性，崩溃安全存储。</font><font style="vertical-align: inherit;">请参见
+         </font></font><a class="xref" href="data-dictionary.html#data-dictionary-transactional-storage" title="14.3字典数据的事务存储"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">第14.3节“字典数据的事务存储”</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。
+      </font></font></p></li><li class="listitem"><p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+        字典对象的统一和集中式缓存。</font><font style="vertical-align: inherit;">请参见
+         </font></font><a class="xref" href="data-dictionary.html#data-dictionary-object-cache" title="14.4字典对象缓存"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">第14.4节“字典对象缓存”</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。
+      </font></font></p></li><li class="listitem"><p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+        一些</font></font><a class="link" href="information-schema.html" title="第25章INFORMATION_SCHEMA表"><code class="literal">INFORMATION_SCHEMA</code></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">表的</font><font style="vertical-align: inherit;">更简单和改进的实现
+         </font><font style="vertical-align: inherit;">。</font><font style="vertical-align: inherit;">请参见
+         </font></font><a class="xref" href="data-dictionary.html#data-dictionary-information-schema" title="14.5 INFORMATION_SCHEMA和数据字典集成"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">第14.5节“INFORMATION_SCHEMA和数据字典集成”</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。
+      </font></font></p></li><li class="listitem"><p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+        原子DDL。</font><font style="vertical-align: inherit;">请参见</font></font><a class="xref" href="sql-syntax.html#atomic-ddl" title="13.1.1原子数据定义语句支持"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">第13.1.1节“原子数据定义语句支持”</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。
+</font></font></p></li></ul>
+</div>
+<div class="important" style="margin-left: 0.5in; margin-right: 0.5in;">
+<div class="admon-title"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+重要
+</font></font></div>
+<p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+      与没有数据字典的服务器相比，启用数据字典的服务器需要一些一般的操作差异; </font><font style="vertical-align: inherit;">请参见
+       </font></font><a class="xref" href="data-dictionary.html#data-dictionary-usage-differences" title="14.7数据字典使用差异"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">第14.7节“数据字典使用差异”</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。</font><font style="vertical-align: inherit;">此外，对于MySQL 8.0的升级，升级过程与以前的MySQL版本略有不同，并要求您通过检查特定的先决条件来验证安装的升级准备情况。</font><font style="vertical-align: inherit;">有关更多信息，请参见</font></font><a class="xref" href="installing.html#upgrading" title="2.11升级MySQL"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">第2.11节“升级MySQL”</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">，特别是</font></font><a class="xref" href="installing.html#upgrade-prerequisites" title="2.11.5准备升级安装"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">第2.11.5节“准备升级安装”</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。
+</font></font></p>
+</div>
+<div class="section">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="data-dictionary-schema"></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">14.1数据字典模式</font></font></h2>
+
+</div>
+
+</div>
+
+</div>
+<a class="indexterm" name="idm140091653564432"></a><p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+      数据字典表受到保护，只能在MySQL的调试版本中访问。</font><font style="vertical-align: inherit;">但是，MySQL支持通过</font></font><a class="link" href="information-schema.html" title="第25章INFORMATION_SCHEMA表"><code class="literal">INFORMATION_SCHEMA</code></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">表和
+       </font></font><a class="link" href="sql-syntax.html#show" title="13.7.6 SHOW语法"><code class="literal">SHOW</code></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">语句</font><font style="vertical-align: inherit;">访问存储在数据字典表中的数据
+       </font><font style="vertical-align: inherit;">。</font><font style="vertical-align: inherit;">有关组成数据字典的表的概述，请参阅
+       </font></font><a class="xref" href="server-administration.html#system-schema-data-dictionary-tables" title="数据字典表"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">数据字典表</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。
+    </font></font></p><p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+      MySQL系统表仍然存在于MySQL 8.0中，可以通过</font></font><a class="link" href="sql-syntax.html#show-tables" title="13.7.6.37 SHOW TABLES语法"><code class="literal">SHOW TABLES</code></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+      在</font></font><code class="literal">mysql</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">系统数据库</font><font style="vertical-align: inherit;">上</font><font style="vertical-align: inherit;">发出</font><font style="vertical-align: inherit;">声明</font><font style="vertical-align: inherit;">来查看</font><font style="vertical-align: inherit;">。</font><font style="vertical-align: inherit;">通常，MySQL数据字典表和系统表之间的区别在于数据字典表包含执行SQL查询所需的元数据，而系统表包含辅助数据，如时区和帮助信息。</font><font style="vertical-align: inherit;">MySQL系统表和数据字典表在升级方式上也有所不同。</font><font style="vertical-align: inherit;">MySQL服务器管理数据字典升级。</font><font style="vertical-align: inherit;">SQL服务器。</font><font style="vertical-align: inherit;">请参阅</font></font><a class="xref" href="data-dictionary.html#data-dictionary-upgrade" title="如何升级数据字典"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">如何升级数据字典</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。</font><font style="vertical-align: inherit;">升级MySQL系统表需要运行完整的MySQL升级过程。</font><font style="vertical-align: inherit;">请参见
+       </font></font><a class="xref" href="installing.html#upgrading-what-is-upgraded" title="2.11.3 MySQL升级过程升级的内容"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">第2.11.3节“MySQL升级过程升级的内容”</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。
+</font></font></p>
+<div class="simplesect">
+
+<div class="titlepage">
+<div>
+
+<div class="simple">
+<h3 class="title"><a name="data-dictionary-upgrade"></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">如何升级数据字典</font></font></h3>
+</div>
+</div>
+</div>
+<p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+        新版本的MySQL可能包括对数据字典表定义的更改。</font><font style="vertical-align: inherit;">这些更改存在于新安装的MySQL版本中，但在执行MySQL二进制文件的就地升级时，在使用新二进制文件重新启动MySQL服务器时会应用更改。</font><font style="vertical-align: inherit;">在启动时，将服务器的数据字典版本与存储在数据字典中的版本信息进行比较，以确定是否应该升级数据字典表。</font><font style="vertical-align: inherit;">如果需要升级并且支持升级，则服务器将创建具有更新定义的数据字典表，将持久化元数据复制到新表，以原子方式将旧表替换为新表，并重新初始化数据字典。</font><font style="vertical-align: inherit;">如果不需要升级，
+      </font></font></p><p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+        数据字典表的升级是一种原子操作，这意味着所有数据字典表都会根据需要进行升级或操作失败。</font><font style="vertical-align: inherit;">如果升级操作失败，则服务器启动失败并显示错误。</font><font style="vertical-align: inherit;">在这种情况下，旧的服务器二进制文件可以与旧数据目录一起使用以启动服务器。</font><font style="vertical-align: inherit;">再次使用新的服务器二进制文件启动服务器时，将重新尝试数据字典升级。
+      </font></font></p><p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+        通常，在成功升级数据字典表之后，无法使用旧服务器二进制文件重新启动服务器。</font><font style="vertical-align: inherit;">因此，在升级数据字典表后，不支持将MySQL服务器二进制文件降级为以前的MySQL版本。
+      </font></font></p><p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+        该</font></font><a class="link" href="programs.html#mysqld" title="4.3.1 mysqld  -  MySQL服务器"><span class="command"><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">mysqld的</font></font></strong></span></a>
+        <a class="link" href="server-administration.html#option_mysqld_no-dd-upgrade"><code class="option">--no-dd-upgrade</code></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">选项可用于防止数据字典表的自动升级启动。</font><font style="vertical-align: inherit;">如果</font></font><a class="link" href="server-administration.html#option_mysqld_no-dd-upgrade"><code class="option">--no-dd-upgrade</code></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">指定，并且服务器发现服务器的数据字典版本与存储在数据字典中的版本不同，则启动失败并显示错误，指出禁止数据字典升级。
+</font></font></p>
+</div>
+<div class="simplesect">
+<div class="titlepage">
+<div>
+<div class="simple">
+<h3 class="title"><a name="viewing-data-dictionary-tables"></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">使用MySQL的调试版本查看数据字典表</font></font></h3>
+
+</div>
+
+</div>
+
+</div>
+<p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+        数据字典表默认受保护，但可以通过使用调试支持（使用</font></font><code class="literal">-DWITH_DEBUG=1</code>
+        <span class="command"><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">CMake</font></font></strong></span><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">选项）</font><font style="vertical-align: inherit;">编译MySQL
+         </font><font style="vertical-align: inherit;">并指定
+         </font></font><code class="literal">+d,skip_dd_table_access_check</code>
+        <a class="link" href="server-administration.html#option_mysqld_debug"><code class="option">debug</code></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">选项和修饰符来访问。</font><font style="vertical-align: inherit;">有关编译调试版本的信息，请参见
+         </font></font><a class="xref" href="extending-mysql.html#compiling-for-debugging" title="29.5.1.1编译MySQL以进行调试"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">第29.5.1.1节“编译MySQL以进行调试”</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。
+</font></font></p>
+<div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+
+<div class="admon-title"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+警告
+</font></font></div>
+<p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+          建议不要直接修改或写入数据字典表，这可能会导致MySQL实例无法运行。
+</font></font></p>
+</div>
+<p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+        在使用调试支持编译MySQL之后，使用此
+         </font></font><a class="link" href="data-types.html#set" title="11.4.5 SET类型"><code class="literal">SET</code></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">语句使数据字典表对</font></font><a class="link" href="programs.html#mysql" title="4.5.1 mysql  -  MySQL命令行客户端"><span class="command"><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">mysql</font></font></strong></span></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">客户端会话</font><font style="vertical-align: inherit;">可见</font><font style="vertical-align: inherit;">：
+      </font></font></p><pre data-lang="sql" class="programlisting"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">MySQL的&gt; </font></font><strong class="userinput"><code>SET SESSION debug='+d,skip_dd_table_access_check';</code></strong>
+</pre><p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+        使用此查询可以检索数据字典表的列表：
+      </font></font></p><pre data-lang="sql" class="programlisting"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">MySQL的&gt; </font></font><strong class="userinput"><code>SELECT name, schema_id, hidden, type FROM mysql.tables where schema_id=1 AND hidden='System';</code></strong>
+</pre><p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+        使用</font></font><a class="link" href="sql-syntax.html#show-create-table" title="13.7.6.10 SHOW CREATE TABLE语法"><code class="literal">SHOW CREATE TABLE</code></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">查看数据字典表的定义。</font><font style="vertical-align: inherit;">例如：
+      </font></font></p><pre data-lang="sql" class="programlisting"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">MySQL的&gt; </font></font><strong class="userinput"><code>SHOW CREATE TABLE mysql.catalogs\G</code></strong>
+</pre>
+</div>
+
+</div>
+<div class="section">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="data-dictionary-file-removal"></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">14.2删除基于文件的元数据存储</font></font></h2>
+
+</div>
+
+</div>
+
+</div>
+<a class="indexterm" name="idm140091653527952"></a><p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+      在以前的MySQL版本中，字典数据部分存储在元数据文件中。</font><font style="vertical-align: inherit;">基于文件的元数据存储的问题包括昂贵的文件扫描，对文件系统相关错误的敏感性，处理复制和崩溃恢复失败状态的复杂代码，以及缺乏可扩展性，这使得难以为新功能和关系对象添加元数据。
+    </font></font></p><p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+      下面列出的元数据文件将从MySQL中删除。</font><font style="vertical-align: inherit;">除非另有说明，否则先前存储在元数据文件中的数据现在存储在数据字典表中。
+</font></font></p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          <code class="filename">.frm</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">files：表元数据文件。</font><font style="vertical-align: inherit;">随着</font></font><code class="filename">.frm</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">文件</font><font style="vertical-align: inherit;">的删除</font><font style="vertical-align: inherit;">：
+</font></font></p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+              将</font></font><code class="filename">.frm</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">删除文件结构</font><font style="vertical-align: inherit;">强加的64KB表定义大小限制
+               </font><font style="vertical-align: inherit;">。
+            </font></font></p></li><li class="listitem"><p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+              该</font><font style="vertical-align: inherit;">列报告硬编码值</font><font style="vertical-align: inherit;">，这是</font><font style="vertical-align: inherit;">MySQL 5.7中使用</font><font style="vertical-align: inherit;">的最后一个
+               </font><font style="vertical-align: inherit;">文件版本。
+</font></font><a class="link" href="information-schema.html#tables-table" title="25.30 INFORMATION_SCHEMA TABLES表"><code class="literal">INFORMATION_SCHEMA.TABLES</code></a>
+              <code class="literal">VERSION</code><font style="vertical-align: inherit;"></font><code class="literal">10</code><font style="vertical-align: inherit;"></font><code class="filename">.frm</code><font style="vertical-align: inherit;"></font></p></li></ul>
+</div>
+</li><li class="listitem"><p>
+          <code class="filename">.par</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">files：分区定义文件。
+          </font></font><code class="literal">InnoDB</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">在MySQL 5.7中停止使用分区定义文件，并引入了对</font></font><code class="literal">InnoDB</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">表</font><font style="vertical-align: inherit;">的本机分区支持</font><font style="vertical-align: inherit;">。
+        </font></font></p></li><li class="listitem"><p>
+          <code class="filename">.TRN</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> files：触发命名空间文件。
+        </font></font></p></li><li class="listitem"><p>
+          <code class="filename">.TRG</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> files：触发器参数文件。
+        </font></font></p></li><li class="listitem"><p>
+          <code class="filename">.isl</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">files：</font></font><code class="literal">InnoDB</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+          符号链接文件，包含</font><font style="vertical-align: inherit;">
+          在数据目录外部创建</font></font><a class="link" href="glossary.html#glos_file_per_table" title="文件的每个表"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">的每</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">表文件</font><a class="link" href="glossary.html#glos_file_per_table" title="文件的每个表"><font style="vertical-align: inherit;">表</font></a><font style="vertical-align: inherit;">空间文件</font><font style="vertical-align: inherit;">的位置
+           </font><font style="vertical-align: inherit;">。
+        </font></font></p></li><li class="listitem"><p>
+          <code class="filename">db.opt</code> files: Database configuration
+          files. These files, one per database directory, contained
+          database default character set attributes.
+</p></li></ul>
+</div>
+
+</div>
+<div class="section">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="data-dictionary-transactional-storage"></a>14.3&nbsp;Transactional Storage of Dictionary Data</h2>
+
+</div>
+
+</div>
+
+</div>
+<a class="indexterm" name="idm140091653503936"></a><p>
+      The data dictionary schema stores dictionary data in transactional
+      (<code class="literal">InnoDB</code>) tables. Data dictionary tables are
+      located in the <code class="filename">mysql</code> database together with
+      non-data dictionary system tables.
+    </p><p>
+      Data dictionary tables are created in a single
+      <code class="literal">InnoDB</code> tablespace named
+      <code class="filename">mysql.ibd</code>, which resides in the MySQL data
+      directory. The <code class="filename">mysql.ibd</code> tablespace file must
+      reside in the MySQL data directory and its name cannot be modified
+      or used by another tablespace.
+    </p><p>
+      Dictionary data is protected by the same commit, rollback, and
+      crash-recovery capabilities that protect user data that is stored
+      in <code class="literal">InnoDB</code> tables.
+</p>
+</div>
+<div class="section">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="data-dictionary-object-cache"></a>14.4&nbsp;Dictionary Object Cache</h2>
+
+</div>
+
+</div>
+
+</div>
+<a class="indexterm" name="idm140091653495104"></a><a class="indexterm" name="idm140091653494032"></a><p>
+      The dictionary object cache is a shared global cache that stores
+      previously accessed data dictionary objects in memory to enable
+      object reuse and minimize disk I/O. Similar to other cache
+      mechanisms used by MySQL, the dictionary object cache uses an
+      <a class="link" href="glossary.html#glos_lru" title="LRU">LRU</a>-based eviction strategy to
+      evict least recently used objects from memory.
+    </p><p>
+      The dictionary object cache comprises cache partitions that store
+      different object types. Some cache partition size limits are
+      configurable, whereas others are hardcoded.
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          <span class="bold"><strong>tablespace definition cache
+          partition</strong></span>: Stores tablespace definition objects.
+          The
+          <a class="link" href="server-administration.html#sysvar_tablespace_definition_cache"><code class="literal">tablespace_definition_cache</code></a>
+          option sets a limit for the number of tablespace definition
+          objects that can be stored in the dictionary object cache. The
+          default value is 256.
+        </p></li><li class="listitem"><p>
+          <span class="bold"><strong>schema definition cache
+          partition</strong></span>: Stores schema definition objects. The
+          <a class="link" href="server-administration.html#sysvar_schema_definition_cache"><code class="literal">schema_definition_cache</code></a>
+          option sets a limit for the number of schema definition
+          objects that can be stored in the dictionary object cache. The
+          default value is 256.
+        </p></li><li class="listitem"><p>
+          <span class="bold"><strong>table definition cache
+          partition</strong></span>: Stores table definition objects. The
+          object limit is set to the value of
+          <a class="link" href="server-administration.html#sysvar_max_connections"><code class="literal">max_connections</code></a>, which has a
+          default value of 151.
+        </p><p>
+          The table definition cache partition exists in parallel with
+          the table definition cache that is configured using the
+          <a class="link" href="server-administration.html#sysvar_table_definition_cache"><code class="literal">table_definition_cache</code></a>
+          configuration option. Both caches store table definitions but
+          serve different parts of the MySQL server. Objects in one
+          cache have no dependence on the existence of objects in the
+          other.
+        </p></li><li class="listitem"><p>
+          <span class="bold"><strong>stored program definition cache
+          partition</strong></span>: Stores stored program definition
+          objects. The
+          <a class="link" href="server-administration.html#sysvar_stored_program_definition_cache"><code class="literal">stored_program_definition_cache</code></a>
+          option sets a limit for the number of stored program
+          definition objects that can be stored in the dictionary object
+          cache. The default value is 256.
+        </p><p>
+          The stored program definition cache partition exists in
+          parallel with the stored procedure and stored function caches
+          that are configured using the
+          <a class="link" href="server-administration.html#sysvar_stored_program_cache"><code class="literal">stored_program_cache</code></a> option.
+        </p><p>
+          The <a class="link" href="server-administration.html#sysvar_stored_program_cache"><code class="literal">stored_program_cache</code></a>
+          option sets a soft upper limit for the number of cached stored
+          procedures or functions per connection, and the limit is
+          checked each time a connection executes a stored procedure or
+          function. The stored program definition cache partition, on
+          the other hand, is a shared cache that stores stored program
+          definition objects for other purposes. The existence of
+          objects in the stored program definition cache partition has
+          no dependence on the existence of objects in the stored
+          procedure cache or stored function cache, and vice versa.
+        </p></li><li class="listitem"><p>
+          <span class="bold"><strong>character set definition cache
+          partition</strong></span>: Stores character set definition objects
+          and has a hardcoded object limit of 256.
+        </p></li><li class="listitem"><p>
+          <span class="bold"><strong>collation definition cache
+          partition</strong></span>: Stores collation definition objects and
+          has a hardcoded object limit of 256.
+</p></li></ul>
+</div>
+<p>
+      For information about valid values for dictionary object cache
+      configuration options, refer to
+      <a class="xref" href="server-administration.html#server-system-variables" title="5.1.8服务器系统变量">Section&nbsp;5.1.8, “Server System Variables”</a>.
+</p>
+</div>
+<div class="section">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="data-dictionary-information-schema"></a>14.5&nbsp;INFORMATION_SCHEMA and Data Dictionary Integration</h2>
+
+</div>
+
+</div>
+
+</div>
+<a class="indexterm" name="idm140091653466320"></a><p>
+      With the introduction of the data dictionary, the following
+      <a class="link" href="information-schema.html" title="第25章INFORMATION_SCHEMA表"><code class="literal">INFORMATION_SCHEMA</code></a> tables are
+      implemented as views on data dictionary tables:
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          <a class="link" href="information-schema.html#character-sets-table" title="25.2 INFORMATION_SCHEMA CHARACTER_SETS表"><code class="literal">CHARACTER_SETS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#check-constraints-table" title="25.3 INFORMATION_SCHEMA CHECK_CONSTRAINTS表"><code class="literal">CHECK_CONSTRAINTS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#collations-table" title="25.4 INFORMATION_SCHEMA COLLATIONS表"><code class="literal">COLLATIONS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#collation-character-set-applicability-table" title="25.5&nbsp;The INFORMATION_SCHEMA COLLATION_CHARACTER_SET_APPLICABILITY Table"><code class="literal">COLLATION_CHARACTER_SET_APPLICABILITY</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#columns-table" title="25.6&nbsp;The INFORMATION_SCHEMA COLUMNS Table"><code class="literal">COLUMNS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#column-statistics-table" title="25.8&nbsp;The INFORMATION_SCHEMA COLUMN_STATISTICS Table"><code class="literal">COLUMN_STATISTICS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#events-table" title="25.10&nbsp;The INFORMATION_SCHEMA EVENTS Table"><code class="literal">EVENTS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#files-table" title="25.11&nbsp;The INFORMATION_SCHEMA FILES Table"><code class="literal">FILES</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#innodb-columns-table" title="25.39.8&nbsp;The INFORMATION_SCHEMA INNODB_COLUMNS Table"><code class="literal">INNODB_COLUMNS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#innodb-datafiles-table" title="25.39.9&nbsp;The INFORMATION_SCHEMA INNODB_DATAFILES Table"><code class="literal">INNODB_DATAFILES</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#innodb-fields-table" title="25.39.10&nbsp;The INFORMATION_SCHEMA INNODB_FIELDS Table"><code class="literal">INNODB_FIELDS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#innodb-foreign-table" title="25.39.11&nbsp;The INFORMATION_SCHEMA INNODB_FOREIGN Table"><code class="literal">INNODB_FOREIGN</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#innodb-foreign-cols-table" title="25.39.12&nbsp;The INFORMATION_SCHEMA INNODB_FOREIGN_COLS Table"><code class="literal">INNODB_FOREIGN_COLS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#innodb-indexes-table" title="25.39.19&nbsp;The INFORMATION_SCHEMA INNODB_INDEXES Table"><code class="literal">INNODB_INDEXES</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#innodb-tables-table" title="25.39.24&nbsp;The INFORMATION_SCHEMA INNODB_TABLES Table"><code class="literal">INNODB_TABLES</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#innodb-tablespaces-table" title="25.39.25&nbsp;The INFORMATION_SCHEMA INNODB_TABLESPACES Table"><code class="literal">INNODB_TABLESPACES</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#innodb-tablespaces-brief-table" title="25.39.26&nbsp;The INFORMATION_SCHEMA INNODB_TABLESPACES_BRIEF Table"><code class="literal">INNODB_TABLESPACES_BRIEF</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#innodb-tablestats-table" title="25.39.27&nbsp;The INFORMATION_SCHEMA INNODB_TABLESTATS View"><code class="literal">INNODB_TABLESTATS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#key-column-usage-table" title="25.12&nbsp;The INFORMATION_SCHEMA KEY_COLUMN_USAGE Table"><code class="literal">KEY_COLUMN_USAGE</code></a>
+        </p></li><li class="listitem"><p>
+          <code class="literal">KEYWORDS</code>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#parameters-table" title="25.16&nbsp;The INFORMATION_SCHEMA PARAMETERS Table"><code class="literal">PARAMETERS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#partitions-table" title="25.17&nbsp;The INFORMATION_SCHEMA PARTITIONS Table"><code class="literal">PARTITIONS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#referential-constraints-table" title="25.21&nbsp;The INFORMATION_SCHEMA REFERENTIAL_CONSTRAINTS Table"><code class="literal">REFERENTIAL_CONSTRAINTS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#resource-groups-table" title="25.22&nbsp;The INFORMATION_SCHEMA RESOURCE_GROUPS Table"><code class="literal">RESOURCE_GROUPS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#routines-table" title="25.23&nbsp;The INFORMATION_SCHEMA ROUTINES Table"><code class="literal">ROUTINES</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#schemata-table" title="25.24&nbsp;The INFORMATION_SCHEMA SCHEMATA Table"><code class="literal">SCHEMATA</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#statistics-table" title="25.26&nbsp;The INFORMATION_SCHEMA STATISTICS Table"><code class="literal">STATISTICS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#st-geometry-columns-table" title="25.27&nbsp;The INFORMATION_SCHEMA ST_GEOMETRY_COLUMNS Table"><code class="literal">ST_GEOMETRY_COLUMNS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#st-spatial-reference-systems-table" title="25.28&nbsp;The INFORMATION_SCHEMA ST_SPATIAL_REFERENCE_SYSTEMS Table"><code class="literal">ST_SPATIAL_REFERENCE_SYSTEMS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#tables-table" title="25.30&nbsp;The INFORMATION_SCHEMA TABLES Table"><code class="literal">TABLES</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#table-constraints-table" title="25.32&nbsp;The INFORMATION_SCHEMA TABLE_CONSTRAINTS Table"><code class="literal">TABLE_CONSTRAINTS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#triggers-table" title="25.34&nbsp;The INFORMATION_SCHEMA TRIGGERS Table"><code class="literal">TRIGGERS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#views-table" title="25.36&nbsp;The INFORMATION_SCHEMA VIEWS Table"><code class="literal">VIEWS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#view-routine-usage-table" title="25.37&nbsp;The INFORMATION_SCHEMA VIEW_ROUTINE_USAGE Table"><code class="literal">VIEW_ROUTINE_USAGE</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#view-table-usage-table" title="25.38&nbsp;The INFORMATION_SCHEMA VIEW_TABLE_USAGE Table"><code class="literal">VIEW_TABLE_USAGE</code></a>
+</p></li></ul>
+</div>
+<p>
+      Queries on those tables are now more efficient because they obtain
+      information from data dictionary tables rather than by other,
+      slower means. In particular, for each
+      <code class="literal">INFORMATION_SCHEMA</code> table that is a view on data
+      dictionary tables:
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          The server no longer must create a temporary table for each
+          query of the <code class="literal">INFORMATION_SCHEMA</code> table.
+        </p></li><li class="listitem"><p>
+          When the underlying data dictionary tables store values
+          previously obtained by directory scans (for example, to
+          enumerate database names or table names within databases) or
+          file-opening operations (for example, to read information from
+          <code class="filename">.frm</code> files),
+          <code class="literal">INFORMATION_SCHEMA</code> queries for those values
+          now use table lookups instead. (Additionally, even for a
+          non-view <code class="literal">INFORMATION_SCHEMA</code> table, values
+          such as database and table names are retrieved by lookups from
+          the data dictionary and do not require directory or file
+          scans.)
+        </p></li><li class="listitem"><p>
+          Indexes on the underlying data dictionary tables permit the
+          optimizer to construct efficient query execution plans,
+          something not true for the previous implementation that
+          processed the <code class="literal">INFORMATION_SCHEMA</code> table
+          using a temporary table per query.
+</p></li></ul>
+</div>
+<p>
+      The preceding improvements also apply to
+      <a class="link" href="sql-syntax.html#show" title="13.7.6&nbsp;SHOW Syntax"><code class="literal">SHOW</code></a> statements that display
+      information corresponding to the
+      <code class="literal">INFORMATION_SCHEMA</code> tables that are views on
+      data dictionary tables. For example, <a class="link" href="sql-syntax.html#show-databases" title="13.7.6.14&nbsp;SHOW DATABASES Syntax"><code class="literal">SHOW
+      DATABASES</code></a> displays the same information as the
+      <a class="link" href="information-schema.html#schemata-table" title="25.24&nbsp;The INFORMATION_SCHEMA SCHEMATA Table"><code class="literal">SCHEMATA</code></a> table.
+    </p><p>
+      In addition to the introduction of views on data dictionary
+      tables, table statistics contained in the
+      <a class="link" href="information-schema.html#statistics-table" title="25.26&nbsp;The INFORMATION_SCHEMA STATISTICS Table"><code class="literal">STATISTICS</code></a> and
+      <a class="link" href="information-schema.html#tables-table" title="25.30&nbsp;The INFORMATION_SCHEMA TABLES Table"><code class="literal">TABLES</code></a> tables is now cached to
+      improve <a class="link" href="information-schema.html" title="Chapter&nbsp;25&nbsp;INFORMATION_SCHEMA Tables"><code class="literal">INFORMATION_SCHEMA</code></a> query
+      performance. The
+      <a class="link" href="server-administration.html#sysvar_information_schema_stats_expiry"><code class="literal">information_schema_stats_expiry</code></a>
+      system variable defines the period of time before cached table
+      statistics expire. The default is 86400 seconds (24 hours). If
+      there are no cached statistics or statistics have expired,
+      statistics are retrieved from storage engine when querying table
+      statistics columns. To update cached values at any time for a
+      given table, use <a class="link" href="sql-syntax.html#analyze-table" title="13.7.3.1&nbsp;ANALYZE TABLE Syntax"><code class="literal">ANALYZE TABLE</code></a>
+    </p><p>
+      <a class="link" href="server-administration.html#sysvar_information_schema_stats_expiry"><code class="literal">information_schema_stats_expiry</code></a>
+      can be set to <code class="literal">0</code> to have
+      <a class="link" href="information-schema.html" title="Chapter&nbsp;25&nbsp;INFORMATION_SCHEMA Tables"><code class="literal">INFORMATION_SCHEMA</code></a> queries retrieve
+      the latest statistics directly from the storage engine, which is
+      not as fast as retrieving cached statistics.
+    </p><p>
+      For more information, see
+      <a class="xref" href="optimization.html#information-schema-optimization" title="8.2.3优化INFORMATION_SCHEMA查询">Section&nbsp;8.2.3, “Optimizing INFORMATION_SCHEMA Queries”</a>.
+    </p><p>
+      <code class="literal">INFORMATION_SCHEMA</code> tables in MySQL
+      8.0 are closely tied to the data dictionary,
+      resulting in several usage differences. See
+      <a class="xref" href="data-dictionary.html#data-dictionary-usage-differences" title="14.7数据字典使用差异">Section&nbsp;14.7, “Data Dictionary Usage Differences”</a>.
+</p>
+</div>
+<div class="section">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="serialized-dictionary-information"></a>14.6&nbsp;Serialized Dictionary Information (SDI)</h2>
+
+</div>
+
+</div>
+
+</div>
+<p>
+      In addition to storing metadata about database objects in the data
+      dictionary, MySQL stores it in serialized form. This data is
+      referred to as Serialized Dictionary Information (SDI).
+      <code class="literal">InnoDB</code> stores SDI data within its tablespace
+      files. Other storage engines store SDI data in
+      <code class="filename">.sdi</code> files that are created in the schema
+      directory. SDI data is generated in a compact
+      <code class="literal">JSON</code> format.
+    </p><p>
+      Serialized Dictionary Information (SDI) is present in all
+      <code class="literal">InnoDB</code> tablespace files except for temporary
+      tablespace and undo tablespace files. SDI records in an
+      <code class="literal">InnoDB</code> tablespace file only describe table and
+      tablespace objects contained within the tablespace.
+    </p><p>
+      SDI data in within an <code class="literal">InnoDB</code> tablespace file is
+      only updated by DDL operations on tables within the tablespace.
+    </p><p>
+      The presence of SDI data provides metadata redundancy. For
+      example, if the data dictionary becomes unavailable, object
+      metadata can be extracted directly from <code class="literal">InnoDB</code>
+      tablespace files using the <a class="link" href="programs.html#ibd2sdi" title="4.6.1 ibd2sdi  -  InnoDB表空间SDI提取实用程序"><span class="command"><strong>ibd2sdi</strong></span></a> tool.
+    </p><p>
+      For <code class="literal">InnoDB</code>, an SDI record requires a single
+      index page, which is 16KB in size by default. However, SDI data is
+      compressed to reduce the storage footprint.
+    </p><p>
+      For partitioned <code class="literal">InnoDB</code> tables comprised of
+      multiple tablespaces, SDI data is stored in the tablespace file of
+      the first partition.
+    </p><p>
+      The MySQL server uses an internal API that is accessed during
+      <a class="link" href="glossary.html#glos_ddl" title="DDL">DDL</a> operations to create and
+      maintain SDI records.
+    </p><p>
+      The <a class="link" href="sql-syntax.html#import-table" title="13.2.5 IMPORT TABLE语法"><code class="literal">IMPORT TABLE</code></a> statement imports
+      <code class="literal">MyISAM</code> tables based on information contained in
+      <code class="filename">.sdi</code> files. For more information, see
+      <a class="xref" href="sql-syntax.html#import-table" title="13.2.5 IMPORT TABLE语法">Section&nbsp;13.2.5, “IMPORT TABLE Syntax”</a>.
+</p>
+</div>
+<div class="section">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="data-dictionary-usage-differences"></a>14.7&nbsp;Data Dictionary Usage Differences</h2>
+
+</div>
+
+</div>
+
+</div>
+<a class="indexterm" name="idm140091653346176"></a><p>
+      Use of a data dictionary-enabled MySQL server entails some
+      operational differences compared to a server that does not have a
+      data dictionary:
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          Previously, enabling the
+          <a class="link" href="innodb-storage-engine.html#sysvar_innodb_read_only"><code class="literal">innodb_read_only</code></a> system
+          variable prevented creating and dropping tables only for the
+          <code class="literal">InnoDB</code> storage. As of MySQL
+          8.0, enabling
+          <a class="link" href="innodb-storage-engine.html#sysvar_innodb_read_only"><code class="literal">innodb_read_only</code></a> prevents
+          these operations for all storage engines. Table creation and
+          drop operations for any storage engine modify data dictionary
+          tables in the <code class="literal">mysql</code> system database, but
+          those tables use the <code class="literal">InnoDB</code> storage engine
+          and cannot be modified when
+          <a class="link" href="innodb-storage-engine.html#sysvar_innodb_read_only"><code class="literal">innodb_read_only</code></a> is enabled.
+          The same principle applies to other table operations that
+          require modifying data dictionary tables. Examples:
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p>
+              <a class="link" href="sql-syntax.html#analyze-table" title="13.7.3.1 ANALYZE TABLE语法"><code class="literal">ANALYZE TABLE</code></a> fails because
+              it updates table statistics, which are stored in the data
+              dictionary.
+            </p></li><li class="listitem"><p>
+              <a class="link" href="sql-syntax.html#alter-table" title="13.1.9 ALTER TABLE语法"><code class="literal">ALTER TABLE
+              <em class="replaceable"><code>tbl_name</code></em>
+              ENGINE=<em class="replaceable"><code>engine_name</code></em></code></a>
+              fails because it updates the storage engine designation,
+              which is stored in the data dictionary.
+</p></li></ul>
+</div>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+<div class="admon-title">
+Note
+</div>
+<p>
+            Enabling <a class="link" href="innodb-storage-engine.html#sysvar_innodb_read_only"><code class="literal">innodb_read_only</code></a>
+            also has important implications for non-data dictionary
+            tables in the <code class="literal">mysql</code> system database. For
+            details, see the description of
+            <a class="link" href="innodb-storage-engine.html#sysvar_innodb_read_only"><code class="literal">innodb_read_only</code></a> in
+            <a class="xref" href="innodb-storage-engine.html#innodb-parameters" title="15.13 InnoDB启动选项和系统变量">Section&nbsp;15.13, “InnoDB Startup Options and System Variables”</a>
+</p>
+</div>
+</li><li class="listitem"><p>
+          Previously, tables in the <code class="literal">mysql</code> system
+          database were visible to DML and DDL statements. As of MySQL
+          8.0, data dictionary tables are invisible and
+          cannot be modified or queried directly. However, in most cases
+          there are corresponding <code class="literal">INFORMATION_SCHEMA</code>
+          tables that can be queried instead. This enables the
+          underlying data dictionary tables to be changed as server
+          development proceeds, while maintaining a stable
+          <code class="literal">INFORMATION_SCHEMA</code> interface for
+          application use.
+        </p></li><li class="listitem"><p>
+          <code class="literal">INFORMATION_SCHEMA</code> tables in MySQL
+          8.0 are closely tied to the data dictionary,
+          resulting in several usage differences:
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p>
+              Previously, <code class="literal">INFORMATION_SCHEMA</code> queries
+              for table statistics in the
+              <a class="link" href="information-schema.html#statistics-table" title="25.26 INFORMATION_SCHEMA统计表"><code class="literal">STATISTICS</code></a> and
+              <a class="link" href="information-schema.html#tables-table" title="25.30 INFORMATION_SCHEMA TABLES表"><code class="literal">TABLES</code></a> tables retrieved
+              statistics directly from storage engines. As of MySQL
+              8.0, cached table statistics are used by
+              default. The
+              <a class="link" href="server-administration.html#sysvar_information_schema_stats_expiry"><code class="literal">information_schema_stats_expiry</code></a>
+              system variable defines the period of time before cached
+              table statistics expire. The default is 86400 seconds (24
+              hours). (To update the cached values at any time for a
+              given table, use <a class="link" href="sql-syntax.html#analyze-table" title="13.7.3.1 ANALYZE TABLE语法"><code class="literal">ANALYZE
+              TABLE</code></a>.) If there are no cached statistics or
+              statistics have expired, statistics are retrieved from
+              storage engines when querying table statistics columns. To
+              always retrieve the latest statistics directly from
+              storage engines, set
+              <a class="link" href="server-administration.html#sysvar_information_schema_stats_expiry"><code class="literal">information_schema_stats_expiry</code></a>
+              to <code class="literal">0</code>. For more information, see
+              <a class="xref" href="optimization.html#information-schema-optimization" title="8.2.3优化INFORMATION_SCHEMA查询">Section&nbsp;8.2.3, “Optimizing INFORMATION_SCHEMA Queries”</a>.
+            </p></li><li class="listitem"><p>
+              Several <code class="literal">INFORMATION_SCHEMA</code> tables are
+              views on data dictionary tables, which enables the
+              optimizer to use indexes on those underlying tables.
+              Consequently, depending on optimizer choices, the row
+              order of results for <code class="literal">INFORMATION_SCHEMA</code>
+              queries might differ from previous results. If a query
+              result must have specific row ordering characteristics,
+              include an <code class="literal">ORDER BY</code> clause.
+            </p></li><li class="listitem"><p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+              对</font></font><code class="literal">INFORMATION_SCHEMA</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">表的</font><font style="vertical-align: inherit;">查询</font><font style="vertical-align: inherit;">可能会返回与早期MySQL系列不同的字母表中的列名。</font><font style="vertical-align: inherit;">应用程序应以不区分大小写的方式测试结果集列名称。</font><font style="vertical-align: inherit;">如果这不可行，则解决方法是在选择列表中使用列别名，该列别名返回所需字母表中的列名称。</font><font style="vertical-align: inherit;">例如：
+            </font></font></p><pre class="programlisting"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">SELECT TABLE_SCHEMA AS table_schema，TABLE_NAME AS table_name</font></font><font></font><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME ='users';</font></font><font></font>
+</pre></li><li class="listitem"><p>
+              <a class="link" href="programs.html#mysqldump" title="4.5.4 mysqldump  - 数据库备份程序"><span class="command"><strong><font style="vertical-align: inherit;"></font></strong></span></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">即使在命令行上显式命名，</font><a class="link" href="programs.html#mysqldump" title="4.5.4 mysqldump  - 数据库备份程序"><span class="command"><strong><font style="vertical-align: inherit;"> mysqldump</font></strong></span></a><font style="vertical-align: inherit;">和
+              </font></font><a class="link" href="programs.html#mysqlpump" title="4.5.6 mysqlpump  - 数据库备份程序"><span class="command"><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> mysqlpump</font></font></strong></span></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">也不再转储
+              </font></font><code class="literal">INFORMATION_SCHEMA</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">数据库。
+            </font></font></p></li><li class="listitem"><p>
+              <a class="link" href="sql-syntax.html#create-table-like" title="13.1.20.4 CREATE TABLE ... LIKE语法"><code class="literal">CREATE
+              TABLE <em class="replaceable"><code>dst_tbl</code></em> LIKE
+              <em class="replaceable"><code>src_tbl</code></em></code></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">要求它
+               </font></font><em class="replaceable"><code>src_tbl</code></em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">是一个基表，如果它是一个</font></font><code class="literal">INFORMATION_SCHEMA</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+              数据字典表视图</font><font style="vertical-align: inherit;">的</font><font style="vertical-align: inherit;">表，则会</font><font style="vertical-align: inherit;">失败</font><font style="vertical-align: inherit;">。
+            </font></font></p></li><li class="listitem"><p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+              以前，从</font></font><code class="literal">INFORMATION_SCHEMA</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">表中</font><font style="vertical-align: inherit;">选择的列的结果集标头
+               </font><font style="vertical-align: inherit;">使用查询中指定的大小写。</font><font style="vertical-align: inherit;">此查询生成一个结果集，其标题为
+               </font></font><code class="literal">table_name</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">：
+            </font></font></p><pre data-lang="sql" class="programlisting"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">SELECT table_name FROM INFORMATION_SCHEMA.TABLES;
+</font></font></pre><p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+              从MySQL 8.0开始，这些头文件都是大写的; </font><font style="vertical-align: inherit;">前面的查询生成一个标题为的结果集</font></font><code class="literal">TABLE_NAME</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。</font><font style="vertical-align: inherit;">如有必要，可以使用列别名来实现不同的字母大小写。</font><font style="vertical-align: inherit;">例如：
+            </font></font></p><pre data-lang="sql" class="programlisting"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">SELECT table_name AS'table_name'FROM INFORMATION_SCHEMA.TABLES;
+</font></font></pre></li></ul>
+</div>
+</li><li class="listitem"><p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+          数据目录会影响</font></font><a class="link" href="programs.html#mysqldump" title="4.5.4 mysqldump  - 数据库备份程序"><span class="command"><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">mysqldump</font></font></strong></span></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> 
+          和</font></font><a class="link" href="programs.html#mysqlpump" title="4.5.6 mysqlpump  - 数据库备份程序"><span class="command"><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">mysqlpump</font></font></strong></span></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">如何</font><font style="vertical-align: inherit;">从</font></font><code class="literal">mysql</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">系统数据库</font><font style="vertical-align: inherit;">转储信息
+           </font><font style="vertical-align: inherit;">：
+</font></font></p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+              以前，可以将所有表转储到
+               </font></font><code class="literal">mysql</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">系统数据库中。</font><font style="vertical-align: inherit;">从MySQL 8.0开始，</font></font><a class="link" href="programs.html#mysqldump" title="4.5.4 mysqldump  - 数据库备份程序"><span class="command"><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">mysqldump</font></font></strong></span></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">和
+               </font></font><a class="link" href="programs.html#mysqlpump" title="4.5.6 mysqlpump  - 数据库备份程序"><span class="command"><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">mysqlpump</font></font></strong></span></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">只转储该数据库中的非数据字典表。
+            </font></font></p></li><li class="listitem"><p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+              以前，使用</font><font style="vertical-align: inherit;">选项时</font><font style="vertical-align: inherit;">，
+               </font></font><a class="link" href="programs.html#option_mysqldump_routines"><code class="option">--routines</code></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">和
+               </font></font><a class="link" href="programs.html#option_mysqldump_events"><code class="option">--events</code></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">选项不需要包括存储的例程和事件
+               </font></font><a class="link" href="programs.html#option_mysqldump_all-databases"><code class="option">--all-databases</code></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">：转储包括</font></font><code class="literal">mysql</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">系统数据库，因此还</font><font style="vertical-align: inherit;">包含包含存储的例程和事件定义</font><font style="vertical-align: inherit;">的</font></font><code class="literal">proc</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+              和</font></font><code class="literal">event</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">表。</font><font style="vertical-align: inherit;">从MySQL 8.0开始，</font><font style="vertical-align: inherit;">不使用</font></font><code class="literal">event</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">和
+               </font></font><code class="literal">proc</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">表。</font><font style="vertical-align: inherit;">相应对象的定义存储在数据字典表中，但不会转储这些表。</font><font style="vertical-align: inherit;">要在使用的转储中包含存储的例程和事件
+               </font></font><a class="link" href="programs.html#option_mysqldump_all-databases"><code class="option">--all-databases</code></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">，请使用
+              </font></font><a class="link" href="programs.html#option_mysqldump_routines"><code class="option">--routines</code></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">和
+               </font></font><a class="link" href="programs.html#option_mysqldump_events"><code class="option">--events</code></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">选项明确。
+            </font></font></p></li><li class="listitem"><p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+              以前，该
+               </font></font><a class="link" href="programs.html#option_mysqldump_routines"><code class="option">--routines</code></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">选项需要</font><font style="vertical-align: inherit;">表</font><font style="vertical-align: inherit;">的</font></font><a class="link" href="security.html#priv_select"><code class="literal">SELECT</code></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+              权限</font></font><code class="literal">proc</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。</font><font style="vertical-align: inherit;">从MySQL 8.0开始，不使用该表;
+              </font></font><a class="link" href="programs.html#option_mysqldump_routines"><code class="option">--routines</code></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">需要全局</font></font><a class="link" href="security.html#priv_select"><code class="literal">SELECT</code></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">特权。
+            </font></font></p></li><li class="listitem"><p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+              以前，通过转储</font></font><code class="literal">proc</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">和</font></font><code class="literal">event</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+              表</font><font style="vertical-align: inherit;">，可以将存储的例程和事件定义与其创建和修改时间戳一起转储
+               </font><font style="vertical-align: inherit;">。</font><font style="vertical-align: inherit;">从MySQL 8.0开始，不使用这些表，因此无法转储时间戳。
+</font></font></p></li></ul>
+</div>
+</li><li class="listitem"><p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+          以前，创建包含非法字符的存储例程会产生警告。</font><font style="vertical-align: inherit;">从MySQL 8.0开始，这是一个错误。
+</font></font></p></li></ul>
+</div>
+
+</div>
+<div class="section">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="data-dictionary-limitations"></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">14.8数据字典限制</font></font></h2>
+
+</div>
+
+</div>
+
+</div>
+<a class="indexterm" name="idm140091653260752"></a><p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+      本节介绍MySQL数据字典引入的临时限制。
+</font></font></p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">不支持</font><font style="vertical-align: inherit;">
+          在数据目录下手动创建数据库目录（例如，使用</font></font><span class="command"><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">mkdir</font></font></strong></span><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">）。</font><font style="vertical-align: inherit;">MySQL服务器无法识别手动创建的数据库目录。
+        </font></font></p></li><li class="listitem"><p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+          由于写入存储，撤消日志和重做日志而不是</font></font><code class="filename">.frm</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+          文件</font><font style="vertical-align: inherit;">，DDL操作需要更长的时间</font><font style="vertical-align: inherit;">。
+</font></font></p></li></ul>
+</div>
+
+</div>
+
+</div>
+<div class="copyright-footer">
+
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tbody><tr>
+<td width="40%" align="left"><a accesskey="p" href="sql-syntax.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">上一页</font></font></a></td>
+<td width="20%" align="center"><a accesskey="u" href=""><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">向上</font></font></a></td>
+<td width="40%" align="right">&nbsp;<a accesskey="n" href="innodb-storage-engine.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">下一个</font></font></a></td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">第13章SQL语句语法</font></font></td>
+<td width="20%" align="center"><a accesskey="h" href="index.html"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">家</font></font></a></td>
+<td width="40%" align="right" valign="top"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">第15章InnoDB存储引擎</font></font></td>
+</tr>
+</tbody></table>
+</div><div id="goog-gt-tt" class="skiptranslate" dir="ltr"><div style="padding: 8px;"><div><div class="logo"><img src="https://www.gstatic.com/images/branding/product/1x/translate_24dp.png" width="20" height="20" alt="Google 翻译"></div></div></div><div class="top" style="padding: 8px; float: left; width: 100%;"><h1 class="title gray">原文</h1></div><div class="middle" style="padding: 8px;"><div class="original-text"></div></div><div class="bottom" style="padding: 8px;"><div class="activity-links"><span class="activity-link">提供更好的翻译建议</span><span class="activity-link"></span></div><div class="started-activity-container"><hr style="color: #CCC; background-color: #CCC; height: 1px; border: none;"><div class="activity-root"></div></div></div><div class="status-message" style="display: none;"></div></div>
+
+
+<div class="goog-te-spinner-pos"><div class="goog-te-spinner-animation"><svg xmlns="http://www.w3.org/2000/svg" class="goog-te-spinner" width="96px" height="96px" viewBox="0 0 66 66"><circle class="goog-te-spinner-path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle></svg></div></div></body></html>

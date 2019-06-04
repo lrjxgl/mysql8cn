@@ -1,0 +1,912 @@
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN" class="translated-ltr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Chapter&nbsp;30 MySQL Enterprise Edition</title>
+		<link rel="stylesheet" href="mvl.css" type="text/css">
+		<meta name="generator" content="DocBook XSL Stylesheets + chunker.py v1.9.2">
+		<link rel="start" href="index.html" title="{book-title}">
+		<link rel="up" href="" title="">
+		<link rel="prev" href="extending-mysql.html" title="Chapter&nbsp;29 Extending MySQL">
+		<link rel="next" href="workbench.html" title="Chapter&nbsp;31 MySQL Workbench">
+		 
+		<link type="text/css" rel="stylesheet" charset="UTF-8" href="https://translate.googleapis.com/translate_static/css/translateelement.css">
+	</head>
+
+	<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+		<div class="navheader">
+			<table width="100%" summary="Navigation header">
+				<tbody>
+					<tr>
+						<th colspan="3" align="center">
+							<font style="vertical-align: inherit;">
+								<font style="vertical-align: inherit;">第30章MySQL企业版</font>
+							</font>
+						</th>
+					</tr>
+					<tr>
+						<td width="20%" align="left"><a accesskey="p" href="extending-mysql.html">
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">上一页</font>
+								</font>
+							</a>&nbsp;</td>
+						<th width="60%" align="center"></th>
+						<td width="20%" align="right">&nbsp;<a accesskey="n" href="workbench.html">
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">下一个</font>
+								</font>
+							</a></td>
+					</tr>
+				</tbody>
+			</table>
+			<hr>
+		</div>
+		<div class="chapter">
+			<div class="titlepage">
+				<div>
+					<div>
+						<h1 class="title"><a name="mysql-enterprise"></a>
+							<font style="vertical-align: inherit;">
+								<font style="vertical-align: inherit;">第30章MySQL企业版</font>
+							</font>
+						</h1>
+
+					</div>
+
+				</div>
+
+			</div>
+			<div class="toc">
+				<p><b>
+						<font style="vertical-align: inherit;">
+							<font style="vertical-align: inherit;">目录</font>
+						</font>
+					</b></p>
+				<dl class="toc"><dt><span class="section"><a href="mysql-enterprise.html#mysql-enterprise-monitor">
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">30.1 MySQL企业监控器概述</font>
+								</font>
+							</a></span></dt><dt><span class="section"><a href="mysql-enterprise.html#mysql-enterprise-backup">
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">30.2 MySQL企业备份概述</font>
+								</font>
+							</a></span></dt><dt><span class="section"><a href="mysql-enterprise.html#mysql-enterprise-security">
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">30.3 MySQL企业安全概述</font>
+								</font>
+							</a></span></dt><dt><span class="section"><a href="mysql-enterprise.html#mysql-enterprise-encryption">
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">30.4 MySQL企业加密概述</font>
+								</font>
+							</a></span></dt><dt><span class="section"><a href="mysql-enterprise.html#mysql-enterprise-audit">
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">30.5 MySQL企业审计概述</font>
+								</font>
+							</a></span></dt><dt><span class="section"><a href="mysql-enterprise.html#mysql-enterprise-firewall">
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">30.6 MySQL企业防火墙概述</font>
+								</font>
+							</a></span></dt><dt><span class="section"><a href="mysql-enterprise.html#mysql-enterprise-thread-pool">
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">30.7 MySQL企业线程池概述</font>
+								</font>
+							</a></span></dt><dt><span class="section"><a href="mysql-enterprise.html#mysql-enterprise-data-masking">
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">30.8 MySQL企业数据屏蔽和去标识概述</font>
+								</font>
+							</a></span></dt></dl>
+			</div>
+			<p>
+				<font style="vertical-align: inherit;">
+					<font style="vertical-align: inherit;">
+						MySQL企业版是一种商业产品。</font>
+					<font style="vertical-align: inherit;">与MySQL社区版一样，MySQL企业版包括MySQL服务器，这是一个完全集成的事务安全，符合ACID的数据库，具有完全提交，回滚，崩溃恢复和行级锁定功能。</font>
+					<font style="vertical-align: inherit;">此外，MySQL企业版还包括以下组件，旨在提供监控和在线备份，以及改进的安全性和可扩展性：
+					</font>
+				</font>
+			</p>
+			<p>
+				<font style="vertical-align: inherit;">
+					<font style="vertical-align: inherit;">
+						以下部分将简要讨论这些组件中的每一个，并指出在何处可以找到更详细的信息。</font>
+					<font style="vertical-align: inherit;">要了解有关商业产品的更多信息，请访问</font>
+				</font><a class="ulink" href="https://www.mysql.com/products/" target="_top">
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">https://www.mysql.com/products/</font>
+					</font>
+				</a>
+				<font style="vertical-align: inherit;">
+					<font style="vertical-align: inherit;">。
+					</font>
+				</font>
+			</p>
+			<div class="itemizedlist">
+				<ul class="itemizedlist" style="list-style-type: disc; ">
+					<li class="listitem">
+						<p>
+							<a class="link" href="mysql-enterprise.html#mysql-enterprise-monitor" title="30.1 MySQL企业监控器概述">
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">MySQL企业监控器</font>
+								</font>
+							</a>
+						</p>
+					</li>
+					<li class="listitem">
+						<p>
+							<a class="link" href="mysql-enterprise.html#mysql-enterprise-backup" title="30.2 MySQL企业备份概述">
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">MySQL企业备份</font>
+								</font>
+							</a>
+						</p>
+					</li>
+					<li class="listitem">
+						<p>
+							<a class="link" href="mysql-enterprise.html#mysql-enterprise-security" title="30.3 MySQL企业安全概述">
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">MySQL企业安全</font>
+								</font>
+							</a>
+						</p>
+					</li>
+					<li class="listitem">
+						<p>
+							<a class="link" href="mysql-enterprise.html#mysql-enterprise-encryption" title="30.4 MySQL企业加密概述">
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">MySQL企业加密</font>
+								</font>
+							</a>
+						</p>
+					</li>
+					<li class="listitem">
+						<p>
+							<a class="link" href="mysql-enterprise.html#mysql-enterprise-audit" title="30.5 MySQL企业审计概述">
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">MySQL企业审计</font>
+								</font>
+							</a>
+						</p>
+					</li>
+					<li class="listitem">
+						<p>
+							<a class="link" href="mysql-enterprise.html#mysql-enterprise-firewall" title="30.6 MySQL企业防火墙概述">
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">MySQL企业防火墙</font>
+								</font>
+							</a>
+						</p>
+					</li>
+					<li class="listitem">
+						<p>
+							<a class="link" href="mysql-enterprise.html#mysql-enterprise-thread-pool" title="30.7 MySQL企业线程池概述">
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">MySQL企业线程池</font>
+								</font>
+							</a>
+						</p>
+					</li>
+					<li class="listitem">
+						<p>
+							<a class="link" href="mysql-enterprise.html#mysql-enterprise-data-masking" title="30.8 MySQL企业数据屏蔽和去标识概述">
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">MySQL企业数据屏蔽和去识别</font>
+								</font>
+							</a>
+						</p>
+					</li>
+				</ul>
+			</div>
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h2 class="title" style="clear: both"><a name="mysql-enterprise-monitor"></a>
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">30.1 MySQL企业监控器概述</font>
+								</font>
+							</h2>
+
+						</div>
+
+					</div>
+
+				</div>
+				<a class="indexterm" name="idm140091541781024"></a><a class="indexterm" name="idm140091541779936"></a><a class="indexterm"
+				 name="idm140091541778432"></a><a class="indexterm" name="idm140091541777360"></a>
+				<p>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">
+							MySQL Enterprise Monitor是一个用于MySQL的企业监控系统，可以监控您的MySQL服务器，通知您潜在的问题和问题，并建议您如何解决问题。</font>
+						<font style="vertical-align: inherit;">MySQL Enterprise
+							Monitor可以监控各种配置，从对您的业务非常重要的单个MySQL服务器，一直到为繁忙网站提供动力的庞大MySQL服务器群。
+						</font>
+					</font>
+				</p>
+				<p>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">
+							以下讨论简要总结了构成MySQL Enterprise Monitor产品的基本组件。</font>
+						<font style="vertical-align: inherit;">有关更多信息，请参阅</font>
+					</font><a class="ulink" href="https://dev.mysql.com/doc/mysql-monitor/en/" target="_top">
+						<font style="vertical-align: inherit;">
+							<font style="vertical-align: inherit;">https://dev.mysql.com/doc/mysql-monitor/en/上</font>
+						</font>
+					</a>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">的“MySQL Enterprise Monitor”手册
+						</font>
+						<font style="vertical-align: inherit;">。
+						</font>
+					</font>
+				</p>
+				<p>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">
+							MySQL Enterprise Monitor组件可以根据您的数据库和网络拓扑以各种配置进行安装，从而为您提供可靠且响应迅速的监控数据的最佳组合，同时最大限度地减少数据库服务器计算机的开销。</font>
+						<font style="vertical-align: inherit;">典型的MySQL Enterprise Monitor安装包括：
+						</font>
+					</font>
+				</p>
+				<div class="itemizedlist">
+					<ul class="itemizedlist" style="list-style-type: disc; ">
+						<li class="listitem">
+							<p>
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">
+										要监视的一个或多个MySQL服务器。</font>
+									<font style="vertical-align: inherit;">MySQL Enterprise Monitor可以监控社区和企业MySQL服务器版本。
+									</font>
+								</font>
+							</p>
+						</li>
+						<li class="listitem">
+							<p>
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">
+										每个受监控主机的MySQL Enterprise Monitor Agent。
+									</font>
+								</font>
+							</p>
+						</li>
+						<li class="listitem">
+							<p>
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">
+										单个MySQL企业服务管理器，它整理来自代理的信息并为收集的数据提供用户界面。
+									</font>
+								</font>
+							</p>
+						</li>
+					</ul>
+				</div>
+				<p>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">
+							MySQL Enterprise Monitor旨在监视一个或多个MySQL服务器。</font>
+						<font style="vertical-align: inherit;">使用代理</font>
+					</font><span class="firstterm">
+						<font style="vertical-align: inherit;">
+							<font style="vertical-align: inherit;">MySQL Enterprise Monitor Agent</font>
+						</font>
+					</span>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">收集监视信息
+						</font>
+						<font style="vertical-align: inherit;">。</font>
+						<font style="vertical-align: inherit;">代理与其监视的主机和MySQL服务器通信，收集变量，状态和运行状况信息，并将此信息发送到MySQL Enterprise Service
+							Manager。
+						</font>
+					</font>
+				</p>
+				<p>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">
+							代理程序收集的有关您正在监视的每个MySQL服务器和主机的信息将发送到
+						</font>
+					</font><span class="firstterm">
+						<font style="vertical-align: inherit;">
+							<font style="vertical-align: inherit;">MySQL Enterprise Service Manager</font>
+						</font>
+					</span>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">。</font>
+						<font style="vertical-align: inherit;">此服务器整理来自代理的所有信息。</font>
+						<font style="vertical-align: inherit;">在整理代理发送的信息时，MySQL Enterprise Service Manager会不断测试收集的数据，并将服务器的状态与合理的值进行比较。</font>
+						<font style="vertical-align: inherit;">达到阈值时，服务器可以触发事件（包括警报和通知）以突出显示潜在问题，例如内存不足，CPU使用率高或更复杂的情况，例如缓冲区大小和状态信息不足。</font>
+						<font style="vertical-align: inherit;">我们将每个测试及其相关的阈值称为</font>
+					</font><span class="firstterm">
+						<font style="vertical-align: inherit;">
+							<font style="vertical-align: inherit;">规则</font>
+						</font>
+					</span>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">。
+						</font>
+					</font>
+				</p>
+				<p>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">
+							这些规则以及警报和通知都称为
+						</font>
+					</font><span class="firstterm">
+						<font style="vertical-align: inherit;">
+							<font style="vertical-align: inherit;">MySQL Enterprise Advisors</font>
+						</font>
+					</span>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">。</font>
+						<font style="vertical-align: inherit;">顾问构成了MySQL企业服务管理器的关键部分，因为它们提供有关潜在问题的警告信息和故障排除建议。
+						</font>
+					</font>
+				</p>
+				<p>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">
+							MySQL Enterprise Service Manager包含一个Web服务器，您可以通过任何Web浏览器与其进行交互。</font>
+						<font style="vertical-align: inherit;">此界面是MySQL Enterprise Monitor用户界面，它显示代理收集的所有信息，并允许您以组或单独的方式查看所有服务器及其当前状态。</font>
+						<font style="vertical-align: inherit;">您可以使用MySQL Enterprise Monitor用户界面控制和配置服务的所有方面。
+						</font>
+					</font>
+				</p>
+				<p>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">
+							MySQL Enterprise Monitor Agent进程提供的信息还包括统计信息和查询信息，您可以以图形的形式查看这些信息。</font>
+						<font style="vertical-align: inherit;">例如，您可以将服务器负载，查询号或索引使用信息等方面视为随时间变化的图形。</font>
+						<font style="vertical-align: inherit;">该图表可让您查明服务器上的问题或潜在问题，并通过检查特定时间间隔内的数据，帮助诊断数据库或外部问题（如外部系统或网络故障）的影响。
+						</font>
+					</font>
+				</p>
+				<p>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">
+							MySQL Enterprise Monitor Agent还可以配置为收集有关在服务器上执行的查询的详细信息，包括执行每个查询的行数和执行时间。</font>
+						<font style="vertical-align: inherit;">您可以将详细查询数据与图形信息相关联，以确定在遇到特别高的负载，索引或其他问题时正在执行的查询。</font>
+						<font style="vertical-align: inherit;">查询数据由名为Query Analyzer的系统支持，数据可以根据您的需要以不同方式显示。
+						</font>
+					</font>
+				</p>
+			</div>
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h2 class="title" style="clear: both"><a name="mysql-enterprise-backup"></a>
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">30.2 MySQL企业备份概述</font>
+								</font>
+							</h2>
+
+						</div>
+
+					</div>
+
+				</div>
+				<a class="indexterm" name="idm140091541760400"></a><a class="indexterm" name="idm140091541759360"></a><a class="indexterm"
+				 name="idm140091541758288"></a>
+				<p>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">
+							MySQL Enterprise Backup为MySQL数据库执行热备份操作。</font>
+						<font style="vertical-align: inherit;">该产品的架构可以高效可靠地备份InnoDB存储引擎创建的表。</font>
+						<font style="vertical-align: inherit;">为了完整性，它还可以从MyISAM和其他存储引擎备份表。
+						</font>
+					</font>
+				</p>
+				<p>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">
+							以下讨论简要总结了MySQL Enterprise Backup。</font>
+						<font style="vertical-align: inherit;">有关更多信息，请参阅</font>
+					</font><a class="ulink" href="https://dev.mysql.com/doc/mysql-enterprise-backup/en/" target="_top">
+						<font style="vertical-align: inherit;">
+							<font style="vertical-align: inherit;">https://dev.mysql.com/doc/mysql-enterprise-backup/en/上</font>
+						</font>
+					</a>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">的“MySQL企业备份”手册
+						</font>
+						<font style="vertical-align: inherit;">。
+						</font>
+					</font>
+				</p>
+				<p>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">
+							在数据库运行且应用程序正在读取和写入数据库时​​执行热备份。</font>
+						<font style="vertical-align: inherit;">这种类型的备份不会阻止正常的数据库操作，它甚至可以捕获备份发生时发生的更改。</font>
+						<font style="vertical-align: inherit;">出于这些原因，当数据库</font>
+					</font><span class="quote">
+						<font style="vertical-align: inherit;">
+							<font style="vertical-align: inherit;">“ </font>
+						</font><span class="quote">
+							<font style="vertical-align: inherit;">
+								<font style="vertical-align: inherit;">成长</font>
+							</font>
+						</span>
+						<font style="vertical-align: inherit;">
+							<font style="vertical-align: inherit;"> ”</font>
+						</font>
+					</span>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">时</font>
+						<font style="vertical-align: inherit;">，热备份是可取的</font>
+						<font style="vertical-align: inherit;">- 当数据足够大以至于备份需要大量时间，并且当您的数据对您的业务足够重要时，您必须捕获每个最后的更改，而不采取您的应用程序，网站或Web服务脱机。
+						</font>
+					</font>
+				</p>
+				<p>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">
+							MySQL Enterprise Backup对使用InnoDB存储引擎的所有表进行热备份。</font>
+						<font style="vertical-align: inherit;">对于使用MyISAM或其他非InnoDB存储引擎的表，它执行</font>
+					</font><span class="quote">
+						<font style="vertical-align: inherit;">
+							<font style="vertical-align: inherit;">“ </font>
+						</font><span class="quote">
+							<font style="vertical-align: inherit;">
+								<font style="vertical-align: inherit;">热</font>
+							</font>
+						</span>
+						<font style="vertical-align: inherit;">
+							<font style="vertical-align: inherit;"> ”</font>
+						</font>
+					</span>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">备份，数据库继续运行，但这些表在备份时无法修改。</font>
+						<font style="vertical-align: inherit;">对于高效的备份操作，您可以将InnoDB指定为新表的默认存储引擎，或将现有表转换为使用InnoDB存储引擎。
+						</font>
+					</font>
+				</p>
+			</div>
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h2 class="title" style="clear: both"><a name="mysql-enterprise-security"></a>
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">30.3 MySQL企业安全概述</font>
+								</font>
+							</h2>
+
+						</div>
+
+					</div>
+
+				</div>
+				<a class="indexterm" name="idm140091541750976"></a><a class="indexterm" name="idm140091541749888"></a>
+				<p>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">
+							MySQL企业版提供了使用外部服务实现安全功能的插件：
+						</font>
+					</font>
+				</p>
+				<div class="itemizedlist">
+					<ul class="itemizedlist" style="list-style-type: disc; ">
+						<li class="listitem">
+							<p>
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">
+										MySQL企业版包含一个身份验证插件，使MySQL服务器能够使用PAM（可插入身份验证模块）对MySQL用户进行身份验证。</font>
+									<font style="vertical-align: inherit;">PAM使系统能够使用标准接口访问各种身份验证方法，例如Unix密码或LDAP目录。</font>
+									<font style="vertical-align: inherit;">有关更多信息，请参见
+									</font>
+								</font><a class="xref" href="security.html#pam-pluggable-authentication" title="6.4.1.5 PAM可插拔认证">
+									<font style="vertical-align: inherit;">
+										<font style="vertical-align: inherit;">第6.4.1.5节“PAM可插拔认证”</font>
+									</font>
+								</a>
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">。
+									</font>
+								</font>
+							</p>
+						</li>
+						<li class="listitem">
+							<p>
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">
+										MySQL企业版包括一个在Windows上执行外部身份验证的身份验证插件，使MySQL Server能够使用本机Windows服务来验证客户端连接。</font>
+									<font style="vertical-align: inherit;">已登录Windows的用户可以根据其环境中的信息从MySQL客户端程序连接到服务器，而无需指定其他密码。</font>
+									<font style="vertical-align: inherit;">有关更多信息，请参见
+									</font>
+								</font><a class="xref" href="security.html#windows-pluggable-authentication" title="6.4.1.6 Windows可插拔认证">
+									<font style="vertical-align: inherit;">
+										<font style="vertical-align: inherit;">第6.4.1.6节“Windows可插入身份验证”</font>
+									</font>
+								</a>
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">。
+									</font>
+								</font>
+							</p>
+						</li>
+						<li class="listitem">
+							<p>
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">
+										MySQL企业版包括一个密钥环插件，它使用Oracle Key Vault作为密钥环存储的后端。</font>
+									<font style="vertical-align: inherit;">有关更多信息，请参见
+									</font>
+								</font><a class="xref" href="security.html#keyring" title="6.4.4 MySQL密钥环">
+									<font style="vertical-align: inherit;">
+										<font style="vertical-align: inherit;">第6.4.4节“MySQL密钥环”</font>
+									</font>
+								</a>
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">。
+									</font>
+								</font>
+							</p>
+						</li>
+					</ul>
+				</div>
+				<p>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">
+							有关其他相关的企业安全功能，请参见
+						</font>
+					</font><a class="xref" href="mysql-enterprise.html#mysql-enterprise-encryption" title="30.4 MySQL企业加密概述">
+						<font style="vertical-align: inherit;">
+							<font style="vertical-align: inherit;">第30.4节“MySQL Enterprise Encryption概述”</font>
+						</font>
+					</a>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">。
+						</font>
+					</font>
+				</p>
+			</div>
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h2 class="title" style="clear: both"><a name="mysql-enterprise-encryption"></a>
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">30.4 MySQL企业加密概述</font>
+								</font>
+							</h2>
+
+						</div>
+
+					</div>
+
+				</div>
+				<a class="indexterm" name="idm140091541739616"></a><a class="indexterm" name="idm140091541738528"></a>
+				<p>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">
+							MySQL Enterprise Edition包含一组基于OpenSSL库的加密函数，这些函数在SQL级别公开OpenSSL功能。</font>
+						<font style="vertical-align: inherit;">这些功能使企业应用程序能够执行以下操作：
+						</font>
+					</font>
+				</p>
+				<div class="itemizedlist">
+					<ul class="itemizedlist" style="list-style-type: disc; ">
+						<li class="listitem">
+							<p>
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">
+										使用公钥非对称加密实现增加的数据保护
+									</font>
+								</font>
+							</p>
+						</li>
+						<li class="listitem">
+							<p>
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">
+										创建公钥和私钥以及数字签名
+									</font>
+								</font>
+							</p>
+						</li>
+						<li class="listitem">
+							<p>
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">
+										执行非对称加密和解密
+									</font>
+								</font>
+							</p>
+						</li>
+						<li class="listitem">
+							<p>
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">
+										使用加密散列进行数字签名和数据验证和验证
+									</font>
+								</font>
+							</p>
+						</li>
+					</ul>
+				</div>
+				<p>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">
+							有关更多信息，请参见</font>
+					</font><a class="xref" href="functions.html#enterprise-encryption" title="12.19 MySQL企业加密功能">
+						<font style="vertical-align: inherit;">
+							<font style="vertical-align: inherit;">第12.19节“MySQL Enterprise Encryption Functions”</font>
+						</font>
+					</a>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">。
+						</font>
+					</font>
+				</p>
+				<p>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">
+							有关其他相关的企业安全功能，请参见
+						</font>
+					</font><a class="xref" href="mysql-enterprise.html#mysql-enterprise-security" title="30.3 MySQL企业安全概述">
+						<font style="vertical-align: inherit;">
+							<font style="vertical-align: inherit;">第30.3节“MySQL企业安全概述”</font>
+						</font>
+					</a>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">。
+						</font>
+					</font>
+				</p>
+			</div>
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h2 class="title" style="clear: both"><a name="mysql-enterprise-audit"></a>
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">30.5 MySQL企业审计概述</font>
+								</font>
+							</h2>
+
+						</div>
+
+					</div>
+
+				</div>
+				<a class="indexterm" name="idm140091541728816"></a><a class="indexterm" name="idm140091541727776"></a>
+				<p>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">
+							MySQL企业版包括使用服务器插件实现的MySQL Enterprise Audit。</font>
+						<font style="vertical-align: inherit;">MySQL Enterprise Audit使用开放的MySQL Audit
+							API来启用标准的，基于策略的监视以及在特定MySQL服务器上执行的连接和查询活动的日志记录。</font>
+						<font style="vertical-align: inherit;">MySQL Enterprise
+							Audit旨在满足Oracle审计规范，为受内部和外部监管准则管理的应用程序提供开箱即用，易于使用的审计和合规性解决方案。
+						</font>
+					</font>
+				</p>
+				<p>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">
+							安装后，审计插件使MySQL Server能够生成包含服务器活动审计记录的日志文件。</font>
+						<font style="vertical-align: inherit;">日志内容包括客户端连接和断开连接的时间，以及它们在连接时执行的操作，例如它们访问的数据库和表。
+						</font>
+					</font>
+				</p>
+				<p>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">
+							有关更多信息，请参见</font>
+					</font><a class="xref" href="security.html#audit-log" title="6.4.5 MySQL企业审计">
+						<font style="vertical-align: inherit;">
+							<font style="vertical-align: inherit;">第6.4.5节“MySQL Enterprise Audit”</font>
+						</font>
+					</a>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">。
+						</font>
+					</font>
+				</p>
+			</div>
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h2 class="title" style="clear: both"><a name="mysql-enterprise-firewall"></a>
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">30.6 MySQL企业防火墙概述</font>
+								</font>
+							</h2>
+
+						</div>
+
+					</div>
+
+				</div>
+				<a class="indexterm" name="idm140091541722304"></a><a class="indexterm" name="idm140091541721216"></a>
+				<p>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">
+							MySQL企业版包括MySQL企业防火墙，这是一个应用程序级防火墙，使数据库管理员能够根据与已接受语句模式的白名单进行匹配来允许或拒绝SQL语句执行。</font>
+						<font style="vertical-align: inherit;">这有助于强化MySQL服务器免受SQL注入等攻击或尝试通过在合法查询工作负载特征之外使用应用程序来利用应用程序。
+						</font>
+					</font>
+				</p>
+				<p>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">
+							在防火墙中注册的每个MySQL帐户都有自己的语句白名单，可以为每个帐户定制保护。</font>
+						<font style="vertical-align: inherit;">对于给定的帐户，防火墙可以在记录或保护模式下运行，以接受可接受的语句模式进行培训或防止不可接受的语句。
+						</font>
+					</font>
+				</p>
+				<p>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">
+							有关更多信息，请参见</font>
+					</font><a class="xref" href="security.html#firewall" title="6.4.7 MySQL企业防火墙">
+						<font style="vertical-align: inherit;">
+							<font style="vertical-align: inherit;">第6.4.7节“MySQL Enterprise Firewall”</font>
+						</font>
+					</a>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">。
+						</font>
+					</font>
+				</p>
+			</div>
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h2 class="title" style="clear: both"><a name="mysql-enterprise-thread-pool"></a>
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">30.7 MySQL企业线程池概述</font>
+								</font>
+							</h2>
+
+						</div>
+
+					</div>
+
+				</div>
+				<a class="indexterm" name="idm140091541715792"></a><a class="indexterm" name="idm140091541714704"></a>
+				<p>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">
+							MySQL企业版包括MySQL Enterprise Thread Pool，使用服务器插件实现。</font>
+						<font style="vertical-align: inherit;">MySQL Server中的默认线程处理模型使用每个客户端连接一个线程执行语句。</font>
+						<font style="vertical-align: inherit;">随着越来越多的客户端连接到服务器并执行语句，整体性能会下降。</font>
+						<font style="vertical-align: inherit;">在MySQL Enterprise Edition中，线程池插件提供了另一种线程处理模型，旨在减少开销并提高性能。</font>
+						<font style="vertical-align: inherit;">该插件实现了一个线程池，通过有效地管理大量客户端连接的语句执行线程来提高服务器性能。
+						</font>
+					</font>
+				</p>
+				<p>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">
+							有关更多信息，请参见</font>
+					</font><a class="xref" href="server-administration.html#thread-pool" title="5.6.3 MySQL企业线程池">
+						<font style="vertical-align: inherit;">
+							<font style="vertical-align: inherit;">第5.6.3节“MySQL Enterprise线程池”</font>
+						</font>
+					</a>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">。
+						</font>
+					</font>
+				</p>
+			</div>
+			<div class="section">
+				<div class="titlepage">
+					<div>
+						<div>
+							<h2 class="title" style="clear: both"><a name="mysql-enterprise-data-masking"></a>
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">30.8 MySQL企业数据屏蔽和去标识概述</font>
+								</font>
+							</h2>
+
+						</div>
+
+					</div>
+
+				</div>
+				<a class="indexterm" name="idm140091541709664"></a><a class="indexterm" name="idm140091541708560"></a>
+				<p>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">
+							MySQL企业版包括MySQL企业数据屏蔽和去标识，实现为包含插件和一组用户定义函数的插件库。</font>
+						<font style="vertical-align: inherit;">数据屏蔽通过用替换替换实际值来隐藏敏感信息。</font>
+						<font style="vertical-align: inherit;">MySQL企业数据屏蔽和去标识功能可以使用多种方法屏蔽现有数据，例如模糊处理（删除识别特征），格式化随机数据的生成以及数据替换或替换。
+						</font>
+					</font>
+				</p>
+				<p>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">
+							有关更多信息，请参见</font>
+					</font><a class="xref" href="security.html#data-masking" title="6.4.8 MySQL企业数据屏蔽和去标识">
+						<font style="vertical-align: inherit;">
+							<font style="vertical-align: inherit;">第6.4.8节“MySQL企业数据屏蔽和取消标识”</font>
+						</font>
+					</a>
+					<font style="vertical-align: inherit;">
+						<font style="vertical-align: inherit;">。
+						</font>
+					</font>
+				</p>
+			</div>
+
+		</div>
+		<div class="copyright-footer">
+
+		</div>
+		<div class="navfooter">
+			<hr>
+			<table width="100%" summary="Navigation footer">
+				<tbody>
+					<tr>
+						<td width="40%" align="left"><a accesskey="p" href="extending-mysql.html">
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">上一页</font>
+								</font>
+							</a></td>
+						<td width="20%" align="center"><a accesskey="u" href="">
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">向上</font>
+								</font>
+							</a></td>
+						<td width="40%" align="right">&nbsp;<a accesskey="n" href="workbench.html">
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">下一个</font>
+								</font>
+							</a></td>
+					</tr>
+					<tr>
+						<td width="40%" align="left" valign="top">
+							<font style="vertical-align: inherit;">
+								<font style="vertical-align: inherit;">第29章扩展MySQL</font>
+							</font>
+						</td>
+						<td width="20%" align="center"><a accesskey="h" href="index.html">
+								<font style="vertical-align: inherit;">
+									<font style="vertical-align: inherit;">家</font>
+								</font>
+							</a></td>
+						<td width="40%" align="right" valign="top">
+							<font style="vertical-align: inherit;">
+								<font style="vertical-align: inherit;">第31章MySQL Workbench</font>
+							</font>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+
+		<div id="goog-gt-tt" class="skiptranslate" dir="ltr">
+			<div style="padding: 8px;">
+				<div>
+					<div class="logo"><img src="https://www.gstatic.com/images/branding/product/1x/translate_24dp.png" width="20"
+						 height="20" alt="Google 翻译"></div>
+				</div>
+			</div>
+			<div class="top" style="padding: 8px; float: left; width: 100%;">
+				<h1 class="title gray">原文</h1>
+			</div>
+			<div class="middle" style="padding: 8px;">
+				<div class="original-text"></div>
+			</div>
+			<div class="bottom" style="padding: 8px;">
+				<div class="activity-links"><span class="activity-link">提供更好的翻译建议</span><span class="activity-link"></span></div>
+				<div class="started-activity-container">
+					<hr style="color: #CCC; background-color: #CCC; height: 1px; border: none;">
+					<div class="activity-root"></div>
+				</div>
+			</div>
+			<div class="status-message" style="display: none;"></div>
+		</div>
+		<div id="cntvlive2-is-installed"></div>
+		<div class="goog-te-spinner-pos">
+			<div class="goog-te-spinner-animation"><svg xmlns="http://www.w3.org/2000/svg" class="goog-te-spinner" width="96px"
+				 height="96px" viewBox="0 0 66 66">
+					<circle class="goog-te-spinner-path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
+				</svg></div>
+		</div>
+	</body>
+</html>

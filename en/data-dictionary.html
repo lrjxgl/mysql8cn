@@ -1,0 +1,881 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Chapter 14 MySQL Data Dictionary</title>
+<link rel="stylesheet" href="mvl.css" type="text/css" />
+<meta name="generator" content="DocBook XSL Stylesheets + chunker.py v1.9.2" />
+<link rel="start" href="index.html" title="{book-title}" />
+<link rel="up" href="" title="" />
+<link rel="prev" href="sql-syntax.html" title="Chapter 13 SQL Statement Syntax" />
+<link rel="next" href="innodb-storage-engine.html" title="Chapter 15 The InnoDB Storage Engine" />
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr>
+<th colspan="3" align="center">Chapter 14 MySQL Data Dictionary</th>
+</tr>
+<tr>
+<td width="20%" align="left"><a accesskey="p" href="sql-syntax.html">Prev</a> </td>
+<th width="60%" align="center"></th>
+<td width="20%" align="right"> <a accesskey="n" href="innodb-storage-engine.html">Next</a></td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="chapter">
+<div class="titlepage">
+<div>
+<div>
+<h1 class="title"><a name="data-dictionary"></a>Chapter 14 MySQL Data Dictionary</h1>
+
+</div>
+
+</div>
+
+</div>
+<div class="toc">
+<p><b>Table of Contents</b></p><dl class="toc"><dt><span class="section"><a href="data-dictionary.html#data-dictionary-schema">14.1 Data Dictionary Schema</a></span></dt><dt><span class="section"><a href="data-dictionary.html#data-dictionary-file-removal">14.2 Removal of File-based Metadata Storage</a></span></dt><dt><span class="section"><a href="data-dictionary.html#data-dictionary-transactional-storage">14.3 Transactional Storage of Dictionary Data</a></span></dt><dt><span class="section"><a href="data-dictionary.html#data-dictionary-object-cache">14.4 Dictionary Object Cache</a></span></dt><dt><span class="section"><a href="data-dictionary.html#data-dictionary-information-schema">14.5 INFORMATION_SCHEMA and Data Dictionary Integration</a></span></dt><dt><span class="section"><a href="data-dictionary.html#serialized-dictionary-information">14.6 Serialized Dictionary Information (SDI)</a></span></dt><dt><span class="section"><a href="data-dictionary.html#data-dictionary-usage-differences">14.7 Data Dictionary Usage Differences</a></span></dt><dt><span class="section"><a href="data-dictionary.html#data-dictionary-limitations">14.8 Data Dictionary Limitations</a></span></dt></dl>
+</div>
+<a class="indexterm" name="idm140091653586768"></a><a class="indexterm" name="idm140091653585696"></a><p>
+    MySQL Server incorporates a transactional data dictionary that
+    stores information about database objects. In previous MySQL
+    releases, dictionary data was stored in metadata files,
+    nontransactional tables, and storage engine-specific data
+    dictionaries.
+  </p><p>
+    This chapter describes the main features, benefits, usage
+    differences, and limitations of the data dictionary. For other
+    implications of the data dictionary feature, refer to the
+    <span class="quote">“<span class="quote">Data Dictionary Notes</span>”</span> section in the
+    <a class="ulink" href="https://dev.mysql.com/doc/relnotes/mysql/8.0/en/" target="_top">MySQL 8.0
+    Release Notes</a>.
+  </p><p>
+    Benefits of the MySQL data dictionary include:
+</p><a class="indexterm" name="idm140091653581696"></a>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+        Simplicity of a centralized data dictionary schema that
+        uniformly stores dictionary data. See
+        <a class="xref" href="data-dictionary.html#data-dictionary-schema" title="14.1 Data Dictionary Schema">Section 14.1, “Data Dictionary Schema”</a>.
+      </p></li><li class="listitem"><p>
+        Removal of file-based metadata storage. See
+        <a class="xref" href="data-dictionary.html#data-dictionary-file-removal" title="14.2 Removal of File-based Metadata Storage">Section 14.2, “Removal of File-based Metadata Storage”</a>.
+      </p></li><li class="listitem"><p>
+        Transactional, crash-safe storage of dictionary data. See
+        <a class="xref" href="data-dictionary.html#data-dictionary-transactional-storage" title="14.3 Transactional Storage of Dictionary Data">Section 14.3, “Transactional Storage of Dictionary Data”</a>.
+      </p></li><li class="listitem"><p>
+        Uniform and centralized caching for dictionary objects. See
+        <a class="xref" href="data-dictionary.html#data-dictionary-object-cache" title="14.4 Dictionary Object Cache">Section 14.4, “Dictionary Object Cache”</a>.
+      </p></li><li class="listitem"><p>
+        A simpler and improved implementation for some
+        <a class="link" href="information-schema.html" title="Chapter 25 INFORMATION_SCHEMA Tables"><code class="literal">INFORMATION_SCHEMA</code></a> tables. See
+        <a class="xref" href="data-dictionary.html#data-dictionary-information-schema" title="14.5 INFORMATION_SCHEMA and Data Dictionary Integration">Section 14.5, “INFORMATION_SCHEMA and Data Dictionary Integration”</a>.
+      </p></li><li class="listitem"><p>
+        Atomic DDL. See <a class="xref" href="sql-syntax.html#atomic-ddl" title="13.1.1 Atomic Data Definition Statement Support">Section 13.1.1, “Atomic Data Definition Statement Support”</a>.
+</p></li></ul>
+</div>
+<div class="important" style="margin-left: 0.5in; margin-right: 0.5in;">
+<div class="admon-title">
+Important
+</div>
+<p>
+      A data dictionary-enabled server entails some general operational
+      differences compared to a server that does not have a data
+      dictionary; see
+      <a class="xref" href="data-dictionary.html#data-dictionary-usage-differences" title="14.7 Data Dictionary Usage Differences">Section 14.7, “Data Dictionary Usage Differences”</a>. Also, for
+      upgrades to MySQL 8.0, the upgrade procedure differs somewhat from
+      previous MySQL releases and requires that you verify the upgrade
+      readiness of your installation by checking specific prerequisites.
+      For more information, see <a class="xref" href="installing.html#upgrading" title="2.11 Upgrading MySQL">Section 2.11, “Upgrading MySQL”</a>,
+      particularly <a class="xref" href="installing.html#upgrade-prerequisites" title="2.11.5 Preparing Your Installation for Upgrade">Section 2.11.5, “Preparing Your Installation for Upgrade”</a>.
+</p>
+</div>
+<div class="section">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="data-dictionary-schema"></a>14.1 Data Dictionary Schema</h2>
+
+</div>
+
+</div>
+
+</div>
+<a class="indexterm" name="idm140091653564432"></a><p>
+      Data dictionary tables are protected and may only be accessed in
+      debug builds of MySQL. However, MySQL supports access to data
+      stored in data dictionary tables through
+      <a class="link" href="information-schema.html" title="Chapter 25 INFORMATION_SCHEMA Tables"><code class="literal">INFORMATION_SCHEMA</code></a> tables and
+      <a class="link" href="sql-syntax.html#show" title="13.7.6 SHOW Syntax"><code class="literal">SHOW</code></a> statements. For an overview of
+      the tables that comprise the data dictionary, see
+      <a class="xref" href="server-administration.html#system-schema-data-dictionary-tables" title="Data Dictionary Tables">Data Dictionary Tables</a>.
+    </p><p>
+      MySQL system tables still exist in MySQL 8.0 and can
+      be viewed by issuing a <a class="link" href="sql-syntax.html#show-tables" title="13.7.6.37 SHOW TABLES Syntax"><code class="literal">SHOW TABLES</code></a>
+      statement on the <code class="literal">mysql</code> system database.
+      Generally, the difference between MySQL data dictionary tables and
+      system tables is that data dictionary tables contain metadata
+      required to execute SQL queries, whereas system tables contain
+      auxiliary data such as time zone and help information. MySQL
+      system tables and data dictionary tables also differ in how they
+      are upgraded. The MySQL server manages data dictionary upgrades.
+      SQL server. See <a class="xref" href="data-dictionary.html#data-dictionary-upgrade" title="How the Data Dictionary is Upgraded">How the Data Dictionary is Upgraded</a>.
+      Upgrading MySQL system tables requires running the full MySQL
+      upgrade procedure. See
+      <a class="xref" href="installing.html#upgrading-what-is-upgraded" title="2.11.3 What the MySQL Upgrade Process Upgrades">Section 2.11.3, “What the MySQL Upgrade Process Upgrades”</a>.
+</p>
+<div class="simplesect">
+
+<div class="titlepage">
+<div>
+
+<div class="simple">
+<h3 class="title"><a name="data-dictionary-upgrade"></a>How the Data Dictionary is Upgraded</h3>
+</div>
+</div>
+</div>
+<p>
+        New versions of MySQL may include changes to data dictionary
+        table definitions. Such changes are present in newly installed
+        versions of MySQL, but when performing an in-place upgrade of
+        MySQL binaries, changes are applied when the MySQL server is
+        restarted using the new binaries. At startup, the data
+        dictionary version of the server is compared to the version
+        information stored in the data dictionary to determine if data
+        dictionary tables should be upgraded. If an upgrade is necessary
+        and supported, the server creates data dictionary tables with
+        updated definitions, copies persisted metadata to the new
+        tables, atomically replaces the old tables with the new ones,
+        and reinitializes the data dictionary. If an upgrade is not
+        necessary, startup continues without updating the data
+        dictionary tables.
+      </p><p>
+        Upgrade of data dictionary tables is an atomic operation, which
+        means that all of the data dictionary tables are upgraded as
+        necessary or the operation fails. If the upgrade operation
+        fails, server startup fails with an error. In this case, the old
+        server binaries can be used with the old data directory to start
+        the server. When the new server binaries are used again to start
+        the server, the data dictionary upgrade is reattempted.
+      </p><p>
+        Generally, after data dictionary tables are successfully
+        upgraded, it is not possible to restart the server using the old
+        server binaries. As a result, downgrading MySQL server binaries
+        to a previous MySQL version is not supported after data
+        dictionary tables are upgraded.
+      </p><p>
+        The <a class="link" href="programs.html#mysqld" title="4.3.1 mysqld — The MySQL Server"><span class="command"><strong>mysqld</strong></span></a>
+        <a class="link" href="server-administration.html#option_mysqld_no-dd-upgrade"><code class="option">--no-dd-upgrade</code></a> option can be
+        used to prevent automatic upgrade of data dictionary tables at
+        startup. When <a class="link" href="server-administration.html#option_mysqld_no-dd-upgrade"><code class="option">--no-dd-upgrade</code></a> is
+        specified, and the server finds that the data dictionary version
+        of the server is different from the version stored in the data
+        dictionary, startup fails with an error stating that the data
+        dictionary upgrade is prohibited.
+</p>
+</div>
+<div class="simplesect">
+<div class="titlepage">
+<div>
+<div class="simple">
+<h3 class="title"><a name="viewing-data-dictionary-tables"></a>Viewing Data Dictionary Tables Using a Debug Build of MySQL</h3>
+
+</div>
+
+</div>
+
+</div>
+<p>
+        Data dictionary tables are protected by default but can be
+        accessed by compiling MySQL with debugging support (using the
+        <code class="literal">-DWITH_DEBUG=1</code>
+        <span class="command"><strong>CMake</strong></span> option) and specifying the
+        <code class="literal">+d,skip_dd_table_access_check</code>
+        <a class="link" href="server-administration.html#option_mysqld_debug"><code class="option">debug</code></a> option and modifier. For
+        information about compiling debug builds, see
+        <a class="xref" href="extending-mysql.html#compiling-for-debugging" title="29.5.1.1 Compiling MySQL for Debugging">Section 29.5.1.1, “Compiling MySQL for Debugging”</a>.
+</p>
+<div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+
+<div class="admon-title">
+Warning
+</div>
+<p>
+          Modifying or writing to data dictionary tables directly is not
+          recommended and may render your MySQL instance inoperable.
+</p>
+</div>
+<p>
+        After compiling MySQL with debugging support, use this
+        <a class="link" href="data-types.html#set" title="11.4.5 The SET Type"><code class="literal">SET</code></a> statement to make data
+        dictionary tables visible to the <a class="link" href="programs.html#mysql" title="4.5.1 mysql — The MySQL Command-Line Client"><span class="command"><strong>mysql</strong></span></a> client
+        session:
+      </p><pre data-lang="sql" class="programlisting">
+mysql&gt; <strong class="userinput"><code>SET SESSION debug='+d,skip_dd_table_access_check';</code></strong>
+</pre><p>
+        Use this query to retrieve a list of data dictionary tables:
+      </p><pre data-lang="sql" class="programlisting">
+mysql&gt; <strong class="userinput"><code>SELECT name, schema_id, hidden, type FROM mysql.tables where schema_id=1 AND hidden='System';</code></strong>
+</pre><p>
+        Use <a class="link" href="sql-syntax.html#show-create-table" title="13.7.6.10 SHOW CREATE TABLE Syntax"><code class="literal">SHOW CREATE TABLE</code></a> to view
+        data dictionary table definitions. For example:
+      </p><pre data-lang="sql" class="programlisting">
+mysql&gt; <strong class="userinput"><code>SHOW CREATE TABLE mysql.catalogs\G</code></strong>
+</pre>
+</div>
+
+</div>
+<div class="section">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="data-dictionary-file-removal"></a>14.2 Removal of File-based Metadata Storage</h2>
+
+</div>
+
+</div>
+
+</div>
+<a class="indexterm" name="idm140091653527952"></a><p>
+      In previous MySQL releases, dictionary data was partially stored
+      in metadata files. Issues with file-based metadata storage
+      included expensive file scans, susceptibility to file
+      system-related bugs, complex code for handling of replication and
+      crash recovery failure states, and a lack of extensibility that
+      made it difficult to add metadata for new features and relational
+      objects.
+    </p><p>
+      The metadata files listed below are removed from MySQL. Unless
+      otherwise noted, data previously stored in metadata files is now
+      stored in data dictionary tables.
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          <code class="filename">.frm</code> files: Table metadata files. With
+          the removal of <code class="filename">.frm</code> files:
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p>
+              The 64KB table definition size limit imposed by the
+              <code class="filename">.frm</code> file structure is removed.
+            </p></li><li class="listitem"><p>
+              The <a class="link" href="information-schema.html#tables-table" title="25.30 The INFORMATION_SCHEMA TABLES Table"><code class="literal">INFORMATION_SCHEMA.TABLES</code></a>
+              <code class="literal">VERSION</code> column reports a hardcoded
+              value of <code class="literal">10</code>, which is the last
+              <code class="filename">.frm</code> file version used in MySQL 5.7.
+</p></li></ul>
+</div>
+</li><li class="listitem"><p>
+          <code class="filename">.par</code> files: Partition definition files.
+          <code class="literal">InnoDB</code> stopped using partition definition
+          files in MySQL 5.7 with the introduction of native
+          partitioning support for <code class="literal">InnoDB</code> tables.
+        </p></li><li class="listitem"><p>
+          <code class="filename">.TRN</code> files: Trigger namespace files.
+        </p></li><li class="listitem"><p>
+          <code class="filename">.TRG</code> files: Trigger parameter files.
+        </p></li><li class="listitem"><p>
+          <code class="filename">.isl</code> files: <code class="literal">InnoDB</code>
+          Symbolic Link files containing the location of
+          <a class="link" href="glossary.html#glos_file_per_table" title="file-per-table">file-per-table</a>
+          tablespace files created outside of the data directory.
+        </p></li><li class="listitem"><p>
+          <code class="filename">db.opt</code> files: Database configuration
+          files. These files, one per database directory, contained
+          database default character set attributes.
+</p></li></ul>
+</div>
+
+</div>
+<div class="section">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="data-dictionary-transactional-storage"></a>14.3 Transactional Storage of Dictionary Data</h2>
+
+</div>
+
+</div>
+
+</div>
+<a class="indexterm" name="idm140091653503936"></a><p>
+      The data dictionary schema stores dictionary data in transactional
+      (<code class="literal">InnoDB</code>) tables. Data dictionary tables are
+      located in the <code class="filename">mysql</code> database together with
+      non-data dictionary system tables.
+    </p><p>
+      Data dictionary tables are created in a single
+      <code class="literal">InnoDB</code> tablespace named
+      <code class="filename">mysql.ibd</code>, which resides in the MySQL data
+      directory. The <code class="filename">mysql.ibd</code> tablespace file must
+      reside in the MySQL data directory and its name cannot be modified
+      or used by another tablespace.
+    </p><p>
+      Dictionary data is protected by the same commit, rollback, and
+      crash-recovery capabilities that protect user data that is stored
+      in <code class="literal">InnoDB</code> tables.
+</p>
+</div>
+<div class="section">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="data-dictionary-object-cache"></a>14.4 Dictionary Object Cache</h2>
+
+</div>
+
+</div>
+
+</div>
+<a class="indexterm" name="idm140091653495104"></a><a class="indexterm" name="idm140091653494032"></a><p>
+      The dictionary object cache is a shared global cache that stores
+      previously accessed data dictionary objects in memory to enable
+      object reuse and minimize disk I/O. Similar to other cache
+      mechanisms used by MySQL, the dictionary object cache uses an
+      <a class="link" href="glossary.html#glos_lru" title="LRU">LRU</a>-based eviction strategy to
+      evict least recently used objects from memory.
+    </p><p>
+      The dictionary object cache comprises cache partitions that store
+      different object types. Some cache partition size limits are
+      configurable, whereas others are hardcoded.
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          <span class="bold"><strong>tablespace definition cache
+          partition</strong></span>: Stores tablespace definition objects.
+          The
+          <a class="link" href="server-administration.html#sysvar_tablespace_definition_cache"><code class="literal">tablespace_definition_cache</code></a>
+          option sets a limit for the number of tablespace definition
+          objects that can be stored in the dictionary object cache. The
+          default value is 256.
+        </p></li><li class="listitem"><p>
+          <span class="bold"><strong>schema definition cache
+          partition</strong></span>: Stores schema definition objects. The
+          <a class="link" href="server-administration.html#sysvar_schema_definition_cache"><code class="literal">schema_definition_cache</code></a>
+          option sets a limit for the number of schema definition
+          objects that can be stored in the dictionary object cache. The
+          default value is 256.
+        </p></li><li class="listitem"><p>
+          <span class="bold"><strong>table definition cache
+          partition</strong></span>: Stores table definition objects. The
+          object limit is set to the value of
+          <a class="link" href="server-administration.html#sysvar_max_connections"><code class="literal">max_connections</code></a>, which has a
+          default value of 151.
+        </p><p>
+          The table definition cache partition exists in parallel with
+          the table definition cache that is configured using the
+          <a class="link" href="server-administration.html#sysvar_table_definition_cache"><code class="literal">table_definition_cache</code></a>
+          configuration option. Both caches store table definitions but
+          serve different parts of the MySQL server. Objects in one
+          cache have no dependence on the existence of objects in the
+          other.
+        </p></li><li class="listitem"><p>
+          <span class="bold"><strong>stored program definition cache
+          partition</strong></span>: Stores stored program definition
+          objects. The
+          <a class="link" href="server-administration.html#sysvar_stored_program_definition_cache"><code class="literal">stored_program_definition_cache</code></a>
+          option sets a limit for the number of stored program
+          definition objects that can be stored in the dictionary object
+          cache. The default value is 256.
+        </p><p>
+          The stored program definition cache partition exists in
+          parallel with the stored procedure and stored function caches
+          that are configured using the
+          <a class="link" href="server-administration.html#sysvar_stored_program_cache"><code class="literal">stored_program_cache</code></a> option.
+        </p><p>
+          The <a class="link" href="server-administration.html#sysvar_stored_program_cache"><code class="literal">stored_program_cache</code></a>
+          option sets a soft upper limit for the number of cached stored
+          procedures or functions per connection, and the limit is
+          checked each time a connection executes a stored procedure or
+          function. The stored program definition cache partition, on
+          the other hand, is a shared cache that stores stored program
+          definition objects for other purposes. The existence of
+          objects in the stored program definition cache partition has
+          no dependence on the existence of objects in the stored
+          procedure cache or stored function cache, and vice versa.
+        </p></li><li class="listitem"><p>
+          <span class="bold"><strong>character set definition cache
+          partition</strong></span>: Stores character set definition objects
+          and has a hardcoded object limit of 256.
+        </p></li><li class="listitem"><p>
+          <span class="bold"><strong>collation definition cache
+          partition</strong></span>: Stores collation definition objects and
+          has a hardcoded object limit of 256.
+</p></li></ul>
+</div>
+<p>
+      For information about valid values for dictionary object cache
+      configuration options, refer to
+      <a class="xref" href="server-administration.html#server-system-variables" title="5.1.8 Server System Variables">Section 5.1.8, “Server System Variables”</a>.
+</p>
+</div>
+<div class="section">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="data-dictionary-information-schema"></a>14.5 INFORMATION_SCHEMA and Data Dictionary Integration</h2>
+
+</div>
+
+</div>
+
+</div>
+<a class="indexterm" name="idm140091653466320"></a><p>
+      With the introduction of the data dictionary, the following
+      <a class="link" href="information-schema.html" title="Chapter 25 INFORMATION_SCHEMA Tables"><code class="literal">INFORMATION_SCHEMA</code></a> tables are
+      implemented as views on data dictionary tables:
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          <a class="link" href="information-schema.html#character-sets-table" title="25.2 The INFORMATION_SCHEMA CHARACTER_SETS Table"><code class="literal">CHARACTER_SETS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#check-constraints-table" title="25.3 The INFORMATION_SCHEMA CHECK_CONSTRAINTS Table"><code class="literal">CHECK_CONSTRAINTS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#collations-table" title="25.4 The INFORMATION_SCHEMA COLLATIONS Table"><code class="literal">COLLATIONS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#collation-character-set-applicability-table" title="25.5 The INFORMATION_SCHEMA COLLATION_CHARACTER_SET_APPLICABILITY Table"><code class="literal">COLLATION_CHARACTER_SET_APPLICABILITY</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#columns-table" title="25.6 The INFORMATION_SCHEMA COLUMNS Table"><code class="literal">COLUMNS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#column-statistics-table" title="25.8 The INFORMATION_SCHEMA COLUMN_STATISTICS Table"><code class="literal">COLUMN_STATISTICS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#events-table" title="25.10 The INFORMATION_SCHEMA EVENTS Table"><code class="literal">EVENTS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#files-table" title="25.11 The INFORMATION_SCHEMA FILES Table"><code class="literal">FILES</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#innodb-columns-table" title="25.39.8 The INFORMATION_SCHEMA INNODB_COLUMNS Table"><code class="literal">INNODB_COLUMNS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#innodb-datafiles-table" title="25.39.9 The INFORMATION_SCHEMA INNODB_DATAFILES Table"><code class="literal">INNODB_DATAFILES</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#innodb-fields-table" title="25.39.10 The INFORMATION_SCHEMA INNODB_FIELDS Table"><code class="literal">INNODB_FIELDS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#innodb-foreign-table" title="25.39.11 The INFORMATION_SCHEMA INNODB_FOREIGN Table"><code class="literal">INNODB_FOREIGN</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#innodb-foreign-cols-table" title="25.39.12 The INFORMATION_SCHEMA INNODB_FOREIGN_COLS Table"><code class="literal">INNODB_FOREIGN_COLS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#innodb-indexes-table" title="25.39.19 The INFORMATION_SCHEMA INNODB_INDEXES Table"><code class="literal">INNODB_INDEXES</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#innodb-tables-table" title="25.39.24 The INFORMATION_SCHEMA INNODB_TABLES Table"><code class="literal">INNODB_TABLES</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#innodb-tablespaces-table" title="25.39.25 The INFORMATION_SCHEMA INNODB_TABLESPACES Table"><code class="literal">INNODB_TABLESPACES</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#innodb-tablespaces-brief-table" title="25.39.26 The INFORMATION_SCHEMA INNODB_TABLESPACES_BRIEF Table"><code class="literal">INNODB_TABLESPACES_BRIEF</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#innodb-tablestats-table" title="25.39.27 The INFORMATION_SCHEMA INNODB_TABLESTATS View"><code class="literal">INNODB_TABLESTATS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#key-column-usage-table" title="25.12 The INFORMATION_SCHEMA KEY_COLUMN_USAGE Table"><code class="literal">KEY_COLUMN_USAGE</code></a>
+        </p></li><li class="listitem"><p>
+          <code class="literal">KEYWORDS</code>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#parameters-table" title="25.16 The INFORMATION_SCHEMA PARAMETERS Table"><code class="literal">PARAMETERS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#partitions-table" title="25.17 The INFORMATION_SCHEMA PARTITIONS Table"><code class="literal">PARTITIONS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#referential-constraints-table" title="25.21 The INFORMATION_SCHEMA REFERENTIAL_CONSTRAINTS Table"><code class="literal">REFERENTIAL_CONSTRAINTS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#resource-groups-table" title="25.22 The INFORMATION_SCHEMA RESOURCE_GROUPS Table"><code class="literal">RESOURCE_GROUPS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#routines-table" title="25.23 The INFORMATION_SCHEMA ROUTINES Table"><code class="literal">ROUTINES</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#schemata-table" title="25.24 The INFORMATION_SCHEMA SCHEMATA Table"><code class="literal">SCHEMATA</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#statistics-table" title="25.26 The INFORMATION_SCHEMA STATISTICS Table"><code class="literal">STATISTICS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#st-geometry-columns-table" title="25.27 The INFORMATION_SCHEMA ST_GEOMETRY_COLUMNS Table"><code class="literal">ST_GEOMETRY_COLUMNS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#st-spatial-reference-systems-table" title="25.28 The INFORMATION_SCHEMA ST_SPATIAL_REFERENCE_SYSTEMS Table"><code class="literal">ST_SPATIAL_REFERENCE_SYSTEMS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#tables-table" title="25.30 The INFORMATION_SCHEMA TABLES Table"><code class="literal">TABLES</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#table-constraints-table" title="25.32 The INFORMATION_SCHEMA TABLE_CONSTRAINTS Table"><code class="literal">TABLE_CONSTRAINTS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#triggers-table" title="25.34 The INFORMATION_SCHEMA TRIGGERS Table"><code class="literal">TRIGGERS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#views-table" title="25.36 The INFORMATION_SCHEMA VIEWS Table"><code class="literal">VIEWS</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#view-routine-usage-table" title="25.37 The INFORMATION_SCHEMA VIEW_ROUTINE_USAGE Table"><code class="literal">VIEW_ROUTINE_USAGE</code></a>
+        </p></li><li class="listitem"><p>
+          <a class="link" href="information-schema.html#view-table-usage-table" title="25.38 The INFORMATION_SCHEMA VIEW_TABLE_USAGE Table"><code class="literal">VIEW_TABLE_USAGE</code></a>
+</p></li></ul>
+</div>
+<p>
+      Queries on those tables are now more efficient because they obtain
+      information from data dictionary tables rather than by other,
+      slower means. In particular, for each
+      <code class="literal">INFORMATION_SCHEMA</code> table that is a view on data
+      dictionary tables:
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          The server no longer must create a temporary table for each
+          query of the <code class="literal">INFORMATION_SCHEMA</code> table.
+        </p></li><li class="listitem"><p>
+          When the underlying data dictionary tables store values
+          previously obtained by directory scans (for example, to
+          enumerate database names or table names within databases) or
+          file-opening operations (for example, to read information from
+          <code class="filename">.frm</code> files),
+          <code class="literal">INFORMATION_SCHEMA</code> queries for those values
+          now use table lookups instead. (Additionally, even for a
+          non-view <code class="literal">INFORMATION_SCHEMA</code> table, values
+          such as database and table names are retrieved by lookups from
+          the data dictionary and do not require directory or file
+          scans.)
+        </p></li><li class="listitem"><p>
+          Indexes on the underlying data dictionary tables permit the
+          optimizer to construct efficient query execution plans,
+          something not true for the previous implementation that
+          processed the <code class="literal">INFORMATION_SCHEMA</code> table
+          using a temporary table per query.
+</p></li></ul>
+</div>
+<p>
+      The preceding improvements also apply to
+      <a class="link" href="sql-syntax.html#show" title="13.7.6 SHOW Syntax"><code class="literal">SHOW</code></a> statements that display
+      information corresponding to the
+      <code class="literal">INFORMATION_SCHEMA</code> tables that are views on
+      data dictionary tables. For example, <a class="link" href="sql-syntax.html#show-databases" title="13.7.6.14 SHOW DATABASES Syntax"><code class="literal">SHOW
+      DATABASES</code></a> displays the same information as the
+      <a class="link" href="information-schema.html#schemata-table" title="25.24 The INFORMATION_SCHEMA SCHEMATA Table"><code class="literal">SCHEMATA</code></a> table.
+    </p><p>
+      In addition to the introduction of views on data dictionary
+      tables, table statistics contained in the
+      <a class="link" href="information-schema.html#statistics-table" title="25.26 The INFORMATION_SCHEMA STATISTICS Table"><code class="literal">STATISTICS</code></a> and
+      <a class="link" href="information-schema.html#tables-table" title="25.30 The INFORMATION_SCHEMA TABLES Table"><code class="literal">TABLES</code></a> tables is now cached to
+      improve <a class="link" href="information-schema.html" title="Chapter 25 INFORMATION_SCHEMA Tables"><code class="literal">INFORMATION_SCHEMA</code></a> query
+      performance. The
+      <a class="link" href="server-administration.html#sysvar_information_schema_stats_expiry"><code class="literal">information_schema_stats_expiry</code></a>
+      system variable defines the period of time before cached table
+      statistics expire. The default is 86400 seconds (24 hours). If
+      there are no cached statistics or statistics have expired,
+      statistics are retrieved from storage engine when querying table
+      statistics columns. To update cached values at any time for a
+      given table, use <a class="link" href="sql-syntax.html#analyze-table" title="13.7.3.1 ANALYZE TABLE Syntax"><code class="literal">ANALYZE TABLE</code></a>
+    </p><p>
+      <a class="link" href="server-administration.html#sysvar_information_schema_stats_expiry"><code class="literal">information_schema_stats_expiry</code></a>
+      can be set to <code class="literal">0</code> to have
+      <a class="link" href="information-schema.html" title="Chapter 25 INFORMATION_SCHEMA Tables"><code class="literal">INFORMATION_SCHEMA</code></a> queries retrieve
+      the latest statistics directly from the storage engine, which is
+      not as fast as retrieving cached statistics.
+    </p><p>
+      For more information, see
+      <a class="xref" href="optimization.html#information-schema-optimization" title="8.2.3 Optimizing INFORMATION_SCHEMA Queries">Section 8.2.3, “Optimizing INFORMATION_SCHEMA Queries”</a>.
+    </p><p>
+      <code class="literal">INFORMATION_SCHEMA</code> tables in MySQL
+      8.0 are closely tied to the data dictionary,
+      resulting in several usage differences. See
+      <a class="xref" href="data-dictionary.html#data-dictionary-usage-differences" title="14.7 Data Dictionary Usage Differences">Section 14.7, “Data Dictionary Usage Differences”</a>.
+</p>
+</div>
+<div class="section">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="serialized-dictionary-information"></a>14.6 Serialized Dictionary Information (SDI)</h2>
+
+</div>
+
+</div>
+
+</div>
+<p>
+      In addition to storing metadata about database objects in the data
+      dictionary, MySQL stores it in serialized form. This data is
+      referred to as Serialized Dictionary Information (SDI).
+      <code class="literal">InnoDB</code> stores SDI data within its tablespace
+      files. Other storage engines store SDI data in
+      <code class="filename">.sdi</code> files that are created in the schema
+      directory. SDI data is generated in a compact
+      <code class="literal">JSON</code> format.
+    </p><p>
+      Serialized Dictionary Information (SDI) is present in all
+      <code class="literal">InnoDB</code> tablespace files except for temporary
+      tablespace and undo tablespace files. SDI records in an
+      <code class="literal">InnoDB</code> tablespace file only describe table and
+      tablespace objects contained within the tablespace.
+    </p><p>
+      SDI data in within an <code class="literal">InnoDB</code> tablespace file is
+      only updated by DDL operations on tables within the tablespace.
+    </p><p>
+      The presence of SDI data provides metadata redundancy. For
+      example, if the data dictionary becomes unavailable, object
+      metadata can be extracted directly from <code class="literal">InnoDB</code>
+      tablespace files using the <a class="link" href="programs.html#ibd2sdi" title="4.6.1 ibd2sdi — InnoDB Tablespace SDI Extraction Utility"><span class="command"><strong>ibd2sdi</strong></span></a> tool.
+    </p><p>
+      For <code class="literal">InnoDB</code>, an SDI record requires a single
+      index page, which is 16KB in size by default. However, SDI data is
+      compressed to reduce the storage footprint.
+    </p><p>
+      For partitioned <code class="literal">InnoDB</code> tables comprised of
+      multiple tablespaces, SDI data is stored in the tablespace file of
+      the first partition.
+    </p><p>
+      The MySQL server uses an internal API that is accessed during
+      <a class="link" href="glossary.html#glos_ddl" title="DDL">DDL</a> operations to create and
+      maintain SDI records.
+    </p><p>
+      The <a class="link" href="sql-syntax.html#import-table" title="13.2.5 IMPORT TABLE Syntax"><code class="literal">IMPORT TABLE</code></a> statement imports
+      <code class="literal">MyISAM</code> tables based on information contained in
+      <code class="filename">.sdi</code> files. For more information, see
+      <a class="xref" href="sql-syntax.html#import-table" title="13.2.5 IMPORT TABLE Syntax">Section 13.2.5, “IMPORT TABLE Syntax”</a>.
+</p>
+</div>
+<div class="section">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="data-dictionary-usage-differences"></a>14.7 Data Dictionary Usage Differences</h2>
+
+</div>
+
+</div>
+
+</div>
+<a class="indexterm" name="idm140091653346176"></a><p>
+      Use of a data dictionary-enabled MySQL server entails some
+      operational differences compared to a server that does not have a
+      data dictionary:
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          Previously, enabling the
+          <a class="link" href="innodb-storage-engine.html#sysvar_innodb_read_only"><code class="literal">innodb_read_only</code></a> system
+          variable prevented creating and dropping tables only for the
+          <code class="literal">InnoDB</code> storage. As of MySQL
+          8.0, enabling
+          <a class="link" href="innodb-storage-engine.html#sysvar_innodb_read_only"><code class="literal">innodb_read_only</code></a> prevents
+          these operations for all storage engines. Table creation and
+          drop operations for any storage engine modify data dictionary
+          tables in the <code class="literal">mysql</code> system database, but
+          those tables use the <code class="literal">InnoDB</code> storage engine
+          and cannot be modified when
+          <a class="link" href="innodb-storage-engine.html#sysvar_innodb_read_only"><code class="literal">innodb_read_only</code></a> is enabled.
+          The same principle applies to other table operations that
+          require modifying data dictionary tables. Examples:
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p>
+              <a class="link" href="sql-syntax.html#analyze-table" title="13.7.3.1 ANALYZE TABLE Syntax"><code class="literal">ANALYZE TABLE</code></a> fails because
+              it updates table statistics, which are stored in the data
+              dictionary.
+            </p></li><li class="listitem"><p>
+              <a class="link" href="sql-syntax.html#alter-table" title="13.1.9 ALTER TABLE Syntax"><code class="literal">ALTER TABLE
+              <em class="replaceable"><code>tbl_name</code></em>
+              ENGINE=<em class="replaceable"><code>engine_name</code></em></code></a>
+              fails because it updates the storage engine designation,
+              which is stored in the data dictionary.
+</p></li></ul>
+</div>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+<div class="admon-title">
+Note
+</div>
+<p>
+            Enabling <a class="link" href="innodb-storage-engine.html#sysvar_innodb_read_only"><code class="literal">innodb_read_only</code></a>
+            also has important implications for non-data dictionary
+            tables in the <code class="literal">mysql</code> system database. For
+            details, see the description of
+            <a class="link" href="innodb-storage-engine.html#sysvar_innodb_read_only"><code class="literal">innodb_read_only</code></a> in
+            <a class="xref" href="innodb-storage-engine.html#innodb-parameters" title="15.13 InnoDB Startup Options and System Variables">Section 15.13, “InnoDB Startup Options and System Variables”</a>
+</p>
+</div>
+</li><li class="listitem"><p>
+          Previously, tables in the <code class="literal">mysql</code> system
+          database were visible to DML and DDL statements. As of MySQL
+          8.0, data dictionary tables are invisible and
+          cannot be modified or queried directly. However, in most cases
+          there are corresponding <code class="literal">INFORMATION_SCHEMA</code>
+          tables that can be queried instead. This enables the
+          underlying data dictionary tables to be changed as server
+          development proceeds, while maintaining a stable
+          <code class="literal">INFORMATION_SCHEMA</code> interface for
+          application use.
+        </p></li><li class="listitem"><p>
+          <code class="literal">INFORMATION_SCHEMA</code> tables in MySQL
+          8.0 are closely tied to the data dictionary,
+          resulting in several usage differences:
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p>
+              Previously, <code class="literal">INFORMATION_SCHEMA</code> queries
+              for table statistics in the
+              <a class="link" href="information-schema.html#statistics-table" title="25.26 The INFORMATION_SCHEMA STATISTICS Table"><code class="literal">STATISTICS</code></a> and
+              <a class="link" href="information-schema.html#tables-table" title="25.30 The INFORMATION_SCHEMA TABLES Table"><code class="literal">TABLES</code></a> tables retrieved
+              statistics directly from storage engines. As of MySQL
+              8.0, cached table statistics are used by
+              default. The
+              <a class="link" href="server-administration.html#sysvar_information_schema_stats_expiry"><code class="literal">information_schema_stats_expiry</code></a>
+              system variable defines the period of time before cached
+              table statistics expire. The default is 86400 seconds (24
+              hours). (To update the cached values at any time for a
+              given table, use <a class="link" href="sql-syntax.html#analyze-table" title="13.7.3.1 ANALYZE TABLE Syntax"><code class="literal">ANALYZE
+              TABLE</code></a>.) If there are no cached statistics or
+              statistics have expired, statistics are retrieved from
+              storage engines when querying table statistics columns. To
+              always retrieve the latest statistics directly from
+              storage engines, set
+              <a class="link" href="server-administration.html#sysvar_information_schema_stats_expiry"><code class="literal">information_schema_stats_expiry</code></a>
+              to <code class="literal">0</code>. For more information, see
+              <a class="xref" href="optimization.html#information-schema-optimization" title="8.2.3 Optimizing INFORMATION_SCHEMA Queries">Section 8.2.3, “Optimizing INFORMATION_SCHEMA Queries”</a>.
+            </p></li><li class="listitem"><p>
+              Several <code class="literal">INFORMATION_SCHEMA</code> tables are
+              views on data dictionary tables, which enables the
+              optimizer to use indexes on those underlying tables.
+              Consequently, depending on optimizer choices, the row
+              order of results for <code class="literal">INFORMATION_SCHEMA</code>
+              queries might differ from previous results. If a query
+              result must have specific row ordering characteristics,
+              include an <code class="literal">ORDER BY</code> clause.
+            </p></li><li class="listitem"><p>
+              Queries on <code class="literal">INFORMATION_SCHEMA</code> tables
+              may return column names in a different lettercase than in
+              earlier MySQL series. Applications should test result set
+              column names in case-insensitive fashion. If that is not
+              feasible, a workaround is to use column aliases in the
+              select list that return column names in the required
+              lettercase. For example:
+            </p><pre class="programlisting">
+SELECT TABLE_SCHEMA AS table_schema, TABLE_NAME AS table_name
+FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'users';
+</pre></li><li class="listitem"><p>
+              <a class="link" href="programs.html#mysqldump" title="4.5.4 mysqldump — A Database Backup Program"><span class="command"><strong>mysqldump</strong></span></a> and
+              <a class="link" href="programs.html#mysqlpump" title="4.5.6 mysqlpump — A Database Backup Program"><span class="command"><strong>mysqlpump</strong></span></a> no longer dump the
+              <code class="literal">INFORMATION_SCHEMA</code> database, even if
+              explicitly named on the command line.
+            </p></li><li class="listitem"><p>
+              <a class="link" href="sql-syntax.html#create-table-like" title="13.1.20.4 CREATE TABLE ... LIKE Syntax"><code class="literal">CREATE
+              TABLE <em class="replaceable"><code>dst_tbl</code></em> LIKE
+              <em class="replaceable"><code>src_tbl</code></em></code></a> requires that
+              <em class="replaceable"><code>src_tbl</code></em> be a base table and
+              fails if it is an <code class="literal">INFORMATION_SCHEMA</code>
+              table that is a view on data dictionary tables.
+            </p></li><li class="listitem"><p>
+              Previously, result set headers of columns selected from
+              <code class="literal">INFORMATION_SCHEMA</code> tables used the
+              capitalization specified in the query. This query produces
+              a result set with a header of
+              <code class="literal">table_name</code>:
+            </p><pre data-lang="sql" class="programlisting">
+SELECT table_name FROM INFORMATION_SCHEMA.TABLES;
+</pre><p>
+              As of MySQL 8.0, these headers are
+              capitalized; the preceding query produces a result set
+              with a header of <code class="literal">TABLE_NAME</code>. If
+              necessary, a column alias can be used to achieve a
+              different lettercase. For example:
+            </p><pre data-lang="sql" class="programlisting">
+SELECT table_name AS 'table_name' FROM INFORMATION_SCHEMA.TABLES;
+</pre></li></ul>
+</div>
+</li><li class="listitem"><p>
+          The data directory affects how <a class="link" href="programs.html#mysqldump" title="4.5.4 mysqldump — A Database Backup Program"><span class="command"><strong>mysqldump</strong></span></a>
+          and <a class="link" href="programs.html#mysqlpump" title="4.5.6 mysqlpump — A Database Backup Program"><span class="command"><strong>mysqlpump</strong></span></a> dump information from the
+          <code class="literal">mysql</code> system database:
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p>
+              Previously, it was possible to dump all tables in the
+              <code class="literal">mysql</code> system database. As of MySQL
+              8.0, <a class="link" href="programs.html#mysqldump" title="4.5.4 mysqldump — A Database Backup Program"><span class="command"><strong>mysqldump</strong></span></a> and
+              <a class="link" href="programs.html#mysqlpump" title="4.5.6 mysqlpump — A Database Backup Program"><span class="command"><strong>mysqlpump</strong></span></a> dump only non-data dictionary
+              tables in that database.
+            </p></li><li class="listitem"><p>
+              Previously, the
+              <a class="link" href="programs.html#option_mysqldump_routines"><code class="option">--routines</code></a> and
+              <a class="link" href="programs.html#option_mysqldump_events"><code class="option">--events</code></a> options were
+              not required to include stored routines and events when
+              using the
+              <a class="link" href="programs.html#option_mysqldump_all-databases"><code class="option">--all-databases</code></a> option:
+              The dump included the <code class="literal">mysql</code> system
+              database, and therefore also the <code class="literal">proc</code>
+              and <code class="literal">event</code> tables containing stored
+              routine and event definitions. As of MySQL
+              8.0, the <code class="literal">event</code> and
+              <code class="literal">proc</code> tables are not used. Definitions
+              for the corresponding objects are stored in data
+              dictionary tables, but those tables are not dumped. To
+              include stored routines and events in a dump made using
+              <a class="link" href="programs.html#option_mysqldump_all-databases"><code class="option">--all-databases</code></a>, use the
+              <a class="link" href="programs.html#option_mysqldump_routines"><code class="option">--routines</code></a> and
+              <a class="link" href="programs.html#option_mysqldump_events"><code class="option">--events</code></a> options
+              explicitly.
+            </p></li><li class="listitem"><p>
+              Previously, the
+              <a class="link" href="programs.html#option_mysqldump_routines"><code class="option">--routines</code></a> option
+              required the <a class="link" href="security.html#priv_select"><code class="literal">SELECT</code></a>
+              privilege for the <code class="literal">proc</code> table. As of
+              MySQL 8.0, that table is not used;
+              <a class="link" href="programs.html#option_mysqldump_routines"><code class="option">--routines</code></a> requires the
+              global <a class="link" href="security.html#priv_select"><code class="literal">SELECT</code></a> privilege
+              instead.
+            </p></li><li class="listitem"><p>
+              Previously, it was possible to dump stored routine and
+              event definitions together with their creation and
+              modification timestamps, by dumping the
+              <code class="literal">proc</code> and <code class="literal">event</code>
+              tables. As of MySQL 8.0, those tables are not
+              used, so it is not possible to dump timestamps.
+</p></li></ul>
+</div>
+</li><li class="listitem"><p>
+          Previously, creating a stored routine that contains illegal
+          characters produced a warning. As of MySQL 8.0,
+          this is an error.
+</p></li></ul>
+</div>
+
+</div>
+<div class="section">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="data-dictionary-limitations"></a>14.8 Data Dictionary Limitations</h2>
+
+</div>
+
+</div>
+
+</div>
+<a class="indexterm" name="idm140091653260752"></a><p>
+      This section describes temporary limitations introduced with the
+      MySQL data dictionary.
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          Manual creation of database directories under the data
+          directory (for example, with <span class="command"><strong>mkdir</strong></span>) is
+          unsupported. Manually created database directories are not
+          recognized by the MySQL Server.
+        </p></li><li class="listitem"><p>
+          DDL operations take longer due to writing to storage, undo
+          logs, and redo logs instead of <code class="filename">.frm</code>
+          files.
+</p></li></ul>
+</div>
+
+</div>
+
+</div>
+<div class="copyright-footer">
+
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left"><a accesskey="p" href="sql-syntax.html">Prev</a></td>
+<td width="20%" align="center"><a accesskey="u" href="">Up</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="innodb-storage-engine.html">Next</a></td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">Chapter 13 SQL Statement Syntax</td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td>
+<td width="40%" align="right" valign="top">Chapter 15 The InnoDB Storage Engine</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

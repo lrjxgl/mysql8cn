@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Chapter 30 MySQL Enterprise Edition</title>
+<link rel="stylesheet" href="mvl.css" type="text/css" />
+<meta name="generator" content="DocBook XSL Stylesheets + chunker.py v1.9.2" />
+<link rel="start" href="index.html" title="{book-title}" />
+<link rel="up" href="" title="" />
+<link rel="prev" href="extending-mysql.html" title="Chapter 29 Extending MySQL" />
+<link rel="next" href="workbench.html" title="Chapter 31 MySQL Workbench" />
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr>
+<th colspan="3" align="center">Chapter 30 MySQL Enterprise Edition</th>
+</tr>
+<tr>
+<td width="20%" align="left"><a accesskey="p" href="extending-mysql.html">Prev</a> </td>
+<th width="60%" align="center"></th>
+<td width="20%" align="right"> <a accesskey="n" href="workbench.html">Next</a></td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="chapter">
+<div class="titlepage">
+<div>
+<div>
+<h1 class="title"><a name="mysql-enterprise"></a>Chapter 30 MySQL Enterprise Edition</h1>
+
+</div>
+
+</div>
+
+</div>
+<div class="toc">
+<p><b>Table of Contents</b></p><dl class="toc"><dt><span class="section"><a href="mysql-enterprise.html#mysql-enterprise-monitor">30.1 MySQL Enterprise Monitor Overview</a></span></dt><dt><span class="section"><a href="mysql-enterprise.html#mysql-enterprise-backup">30.2 MySQL Enterprise Backup Overview</a></span></dt><dt><span class="section"><a href="mysql-enterprise.html#mysql-enterprise-security">30.3 MySQL Enterprise Security Overview</a></span></dt><dt><span class="section"><a href="mysql-enterprise.html#mysql-enterprise-encryption">30.4 MySQL Enterprise Encryption Overview</a></span></dt><dt><span class="section"><a href="mysql-enterprise.html#mysql-enterprise-audit">30.5 MySQL Enterprise Audit Overview</a></span></dt><dt><span class="section"><a href="mysql-enterprise.html#mysql-enterprise-firewall">30.6 MySQL Enterprise Firewall Overview</a></span></dt><dt><span class="section"><a href="mysql-enterprise.html#mysql-enterprise-thread-pool">30.7 MySQL Enterprise Thread Pool Overview</a></span></dt><dt><span class="section"><a href="mysql-enterprise.html#mysql-enterprise-data-masking">30.8 MySQL Enterprise Data Masking and De-Identification Overview</a></span></dt></dl>
+</div>
+<p>
+    MySQL Enterprise Edition is a commercial product. Like MySQL Community Edition, MySQL Enterprise Edition
+    includes MySQL Server, a fully integrated transaction-safe,
+    ACID-compliant database with full commit, rollback, crash-recovery,
+    and row-level locking capabilities. In addition, MySQL Enterprise Edition includes the
+    following components designed to provide monitoring and online
+    backup, as well as improved security and scalability:
+  </p><p>
+    The following sections briefly discuss each of these components and
+    indicate where to find more detailed information. To learn more
+    about commercial products, see <a class="ulink" href="https://www.mysql.com/products/" target="_top">https://www.mysql.com/products/</a>.
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+        <a class="link" href="mysql-enterprise.html#mysql-enterprise-monitor" title="30.1 MySQL Enterprise Monitor Overview">MySQL Enterprise Monitor</a>
+      </p></li><li class="listitem"><p>
+        <a class="link" href="mysql-enterprise.html#mysql-enterprise-backup" title="30.2 MySQL Enterprise Backup Overview">MySQL Enterprise Backup</a>
+      </p></li><li class="listitem"><p>
+        <a class="link" href="mysql-enterprise.html#mysql-enterprise-security" title="30.3 MySQL Enterprise Security Overview">MySQL Enterprise
+        Security</a>
+      </p></li><li class="listitem"><p>
+        <a class="link" href="mysql-enterprise.html#mysql-enterprise-encryption" title="30.4 MySQL Enterprise Encryption Overview">MySQL Enterprise Encryption</a>
+      </p></li><li class="listitem"><p>
+        <a class="link" href="mysql-enterprise.html#mysql-enterprise-audit" title="30.5 MySQL Enterprise Audit Overview">MySQL Enterprise Audit</a>
+      </p></li><li class="listitem"><p>
+        <a class="link" href="mysql-enterprise.html#mysql-enterprise-firewall" title="30.6 MySQL Enterprise Firewall Overview">MySQL Enterprise Firewall</a>
+      </p></li><li class="listitem"><p>
+        <a class="link" href="mysql-enterprise.html#mysql-enterprise-thread-pool" title="30.7 MySQL Enterprise Thread Pool Overview">MySQL Enterprise Thread Pool</a>
+      </p></li><li class="listitem"><p>
+        <a class="link" href="mysql-enterprise.html#mysql-enterprise-data-masking" title="30.8 MySQL Enterprise Data Masking and De-Identification Overview">MySQL Enterprise Data Masking and De-Identification</a>
+</p></li></ul>
+</div>
+<div class="section">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="mysql-enterprise-monitor"></a>30.1 MySQL Enterprise Monitor Overview</h2>
+
+</div>
+
+</div>
+
+</div>
+<a class="indexterm" name="idm140091541781024"></a><a class="indexterm" name="idm140091541779936"></a><a class="indexterm" name="idm140091541778432"></a><a class="indexterm" name="idm140091541777360"></a><p>
+      MySQL Enterprise Monitor is an enterprise monitoring system for MySQL that keeps
+      an eye on your MySQL servers, notifies you of potential issues and
+      problems, and advises you how to fix the issues. MySQL Enterprise Monitor can
+      monitor all kinds of configurations, from a single MySQL server
+      that is important to your business, all the way up to a huge farm
+      of MySQL servers powering a busy website.
+    </p><p>
+      The following discussion briefly summarizes the basic components
+      that make up the MySQL Enterprise Monitor product. For more information, see the
+      MySQL Enterprise Monitor manual, available at
+      <a class="ulink" href="https://dev.mysql.com/doc/mysql-monitor/en/" target="_top">https://dev.mysql.com/doc/mysql-monitor/en/</a>.
+    </p><p>
+      MySQL Enterprise Monitor components can be installed in various configurations
+      depending on your database and network topology, to give you the
+      best combination of reliable and responsive monitoring data, with
+      minimal overhead on the database server machines. A typical
+      MySQL Enterprise Monitor installation consists of:
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          One or more MySQL servers to monitor. MySQL Enterprise Monitor can monitor
+          both Community and Enterprise MySQL server releases.
+        </p></li><li class="listitem"><p>
+          A MySQL Enterprise Monitor Agent for each monitored host.
+        </p></li><li class="listitem"><p>
+          A single MySQL Enterprise Service Manager, which collates information from the
+          agents and provides the user interface to the collected data.
+</p></li></ul>
+</div>
+<p>
+      MySQL Enterprise Monitor is designed to monitor one or more MySQL servers. The
+      monitoring information is collected by using an agent,
+      <span class="firstterm">MySQL Enterprise Monitor Agent</span>. The agent
+      communicates with the hosts and MySQL servers that it monitors,
+      collecting variables, status and health information, and sending
+      this information to the MySQL Enterprise Service Manager.
+    </p><p>
+      The information collected by the agent about each MySQL server and
+      host you are monitoring is sent to the
+      <span class="firstterm">MySQL Enterprise Service Manager</span>. This server
+      collates all of the information from the agents. As it collates
+      the information sent by the agents, the MySQL Enterprise Service Manager
+      continually tests the collected data, comparing the status of the
+      server to reasonable values. When thresholds are reached, the
+      server can trigger an event (including an alarm and notification)
+      to highlight a potential issue, such as low memory, high CPU
+      usage, or more complex conditions such insufficient buffer sizes
+      and status information. We call each test, with its associated
+      threshold value, a <span class="firstterm">rule</span>.
+    </p><p>
+      These rules, and the alarms and notifications, are each known as a
+      <span class="firstterm">MySQL Enterprise Advisors</span>. Advisors
+      form a critical part of the MySQL Enterprise Service Manager, as they provide
+      warning information and troubleshooting advice about potential
+      problems.
+    </p><p>
+      The MySQL Enterprise Service Manager includes a web server, and you interact with
+      it through any web browser. This interface, the MySQL Enterprise Monitor User Interface,
+      displays all of the information collected by the agents, and lets
+      you view all of your servers and their current status as a group
+      or individually. You control and configure all aspects of the
+      service using the MySQL Enterprise Monitor User Interface.
+    </p><p>
+      The information supplied by the MySQL Enterprise Monitor Agent processes also
+      includes statistical and query information, which you can view in
+      the form of graphs. For example, you can view aspects such as
+      server load, query numbers, or index usage information as a graph
+      over time. The graph lets you pinpoint problems or potential
+      issues on your server, and can help diagnose the impact from
+      database or external problems (such as external system or network
+      failure) by examining the data from a specific time interval.
+    </p><p>
+      The MySQL Enterprise Monitor Agent can also be configured to collect detailed
+      information about the queries executed on your server, including
+      the row counts and performance times for executing each query. You
+      can correlate the detailed query data with the graphical
+      information to identify which queries were executing when you
+      experienced a particularly high load, index or other issue. The
+      query data is supported by a system called Query Analyzer, and the
+      data can be presented in different ways depending on your needs.
+</p>
+</div>
+<div class="section">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="mysql-enterprise-backup"></a>30.2 MySQL Enterprise Backup Overview</h2>
+
+</div>
+
+</div>
+
+</div>
+<a class="indexterm" name="idm140091541760400"></a><a class="indexterm" name="idm140091541759360"></a><a class="indexterm" name="idm140091541758288"></a><p>
+      MySQL Enterprise Backup performs hot backup operations for MySQL
+      databases. The product is architected for efficient and reliable
+      backups of tables created by the InnoDB storage engine. For
+      completeness, it can also back up tables from MyISAM and other
+      storage engines.
+    </p><p>
+      The following discussion briefly summarizes MySQL Enterprise
+      Backup. For more information, see the MySQL Enterprise Backup
+      manual, available at
+      <a class="ulink" href="https://dev.mysql.com/doc/mysql-enterprise-backup/en/" target="_top">https://dev.mysql.com/doc/mysql-enterprise-backup/en/</a>.
+    </p><p>
+      Hot backups are performed while the database is running and
+      applications are reading and writing to it. This type of backup
+      does not block normal database operations, and it captures even
+      changes that occur while the backup is happening. For these
+      reasons, hot backups are desirable when your database <span class="quote">“<span class="quote">grows
+      up</span>”</span> -- when the data is large enough that the backup takes
+      significant time, and when your data is important enough to your
+      business that you must capture every last change, without taking
+      your application, website, or web service offline.
+    </p><p>
+      MySQL Enterprise Backup does a hot backup of all tables that use
+      the InnoDB storage engine. For tables using MyISAM or other
+      non-InnoDB storage engines, it does a <span class="quote">“<span class="quote">warm</span>”</span> backup,
+      where the database continues to run, but those tables cannot be
+      modified while being backed up. For efficient backup operations,
+      you can designate InnoDB as the default storage engine for new
+      tables, or convert existing tables to use the InnoDB storage
+      engine.
+</p>
+</div>
+<div class="section">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="mysql-enterprise-security"></a>30.3 MySQL Enterprise Security Overview</h2>
+
+</div>
+
+</div>
+
+</div>
+<a class="indexterm" name="idm140091541750976"></a><a class="indexterm" name="idm140091541749888"></a><p>
+      MySQL Enterprise Edition provides plugins that implement security features using
+      external services:
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          MySQL Enterprise Edition includes an authentication plugin that enables MySQL
+          Server to use PAM (Pluggable Authentication Modules) to
+          authenticate MySQL users. PAM enables a system to use a
+          standard interface to access various kinds of authentication
+          methods, such as Unix passwords or an LDAP directory. For more
+          information, see
+          <a class="xref" href="security.html#pam-pluggable-authentication" title="6.4.1.5 PAM Pluggable Authentication">Section 6.4.1.5, “PAM Pluggable Authentication”</a>.
+        </p></li><li class="listitem"><p>
+          MySQL Enterprise Edition includes an authentication plugin that performs external
+          authentication on Windows, enabling MySQL Server to use native
+          Windows services to authenticate client connections. Users who
+          have logged in to Windows can connect from MySQL client
+          programs to the server based on the information in their
+          environment without specifying an additional password. For
+          more information, see
+          <a class="xref" href="security.html#windows-pluggable-authentication" title="6.4.1.6 Windows Pluggable Authentication">Section 6.4.1.6, “Windows Pluggable Authentication”</a>.
+        </p></li><li class="listitem"><p>
+          MySQL Enterprise Edition includes a keyring plugin that uses Oracle Key Vault as
+          a back end for keyring storage. For more information, see
+          <a class="xref" href="security.html#keyring" title="6.4.4 The MySQL Keyring">Section 6.4.4, “The MySQL Keyring”</a>.
+</p></li></ul>
+</div>
+<p>
+      For other related Enterprise security features, see
+      <a class="xref" href="mysql-enterprise.html#mysql-enterprise-encryption" title="30.4 MySQL Enterprise Encryption Overview">Section 30.4, “MySQL Enterprise Encryption Overview”</a>.
+</p>
+</div>
+<div class="section">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="mysql-enterprise-encryption"></a>30.4 MySQL Enterprise Encryption Overview</h2>
+
+</div>
+
+</div>
+
+</div>
+<a class="indexterm" name="idm140091541739616"></a><a class="indexterm" name="idm140091541738528"></a><p>
+      MySQL Enterprise Edition includes a set of encryption functions based on the OpenSSL
+      library that expose OpenSSL capabilities at the SQL level. These
+      functions enable Enterprise applications to perform the following
+      operations:
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          Implement added data protection using public-key asymmetric
+          cryptography
+        </p></li><li class="listitem"><p>
+          Create public and private keys and digital signatures
+        </p></li><li class="listitem"><p>
+          Perform asymmetric encryption and decryption
+        </p></li><li class="listitem"><p>
+          Use cryptographic hashing for digital signing and data
+          verification and validation
+</p></li></ul>
+</div>
+<p>
+      For more information, see <a class="xref" href="functions.html#enterprise-encryption" title="12.19 MySQL Enterprise Encryption Functions">Section 12.19, “MySQL Enterprise Encryption Functions”</a>.
+    </p><p>
+      For other related Enterprise security features, see
+      <a class="xref" href="mysql-enterprise.html#mysql-enterprise-security" title="30.3 MySQL Enterprise Security Overview">Section 30.3, “MySQL Enterprise Security Overview”</a>.
+</p>
+</div>
+<div class="section">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="mysql-enterprise-audit"></a>30.5 MySQL Enterprise Audit Overview</h2>
+
+</div>
+
+</div>
+
+</div>
+<a class="indexterm" name="idm140091541728816"></a><a class="indexterm" name="idm140091541727776"></a><p>
+      MySQL Enterprise Edition includes MySQL Enterprise Audit, implemented using a server plugin.
+      MySQL Enterprise Audit uses the open MySQL Audit API to enable standard,
+      policy-based monitoring and logging of connection and query
+      activity executed on specific MySQL servers. Designed to meet the
+      Oracle audit specification, MySQL Enterprise Audit provides an out of box, easy
+      to use auditing and compliance solution for applications that are
+      governed by both internal and external regulatory guidelines.
+    </p><p>
+      When installed, the audit plugin enables MySQL Server to produce a
+      log file containing an audit record of server activity. The log
+      contents include when clients connect and disconnect, and what
+      actions they perform while connected, such as which databases and
+      tables they access.
+    </p><p>
+      For more information, see <a class="xref" href="security.html#audit-log" title="6.4.5 MySQL Enterprise Audit">Section 6.4.5, “MySQL Enterprise Audit”</a>.
+</p>
+</div>
+<div class="section">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="mysql-enterprise-firewall"></a>30.6 MySQL Enterprise Firewall Overview</h2>
+
+</div>
+
+</div>
+
+</div>
+<a class="indexterm" name="idm140091541722304"></a><a class="indexterm" name="idm140091541721216"></a><p>
+      MySQL Enterprise Edition includes MySQL Enterprise Firewall, an application-level firewall that enables
+      database administrators to permit or deny SQL statement execution
+      based on matching against whitelists of accepted statement
+      patterns. This helps harden MySQL Server against attacks such as
+      SQL injection or attempts to exploit applications by using them
+      outside of their legitimate query workload characteristics.
+    </p><p>
+      Each MySQL account registered with the firewall has its own
+      statement whitelist, enabling protection to be tailored per
+      account. For a given account, the firewall can operate in
+      recording or protecting mode, for training in the accepted
+      statement patterns or protection against unacceptable statements.
+    </p><p>
+      For more information, see <a class="xref" href="security.html#firewall" title="6.4.7 MySQL Enterprise Firewall">Section 6.4.7, “MySQL Enterprise Firewall”</a>.
+</p>
+</div>
+<div class="section">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="mysql-enterprise-thread-pool"></a>30.7 MySQL Enterprise Thread Pool Overview</h2>
+
+</div>
+
+</div>
+
+</div>
+<a class="indexterm" name="idm140091541715792"></a><a class="indexterm" name="idm140091541714704"></a><p>
+      MySQL Enterprise Edition includes MySQL Enterprise Thread Pool, implemented using a server plugin. The
+      default thread-handling model in MySQL Server executes statements
+      using one thread per client connection. As more clients connect to
+      the server and execute statements, overall performance degrades.
+      In MySQL Enterprise Edition, a thread pool plugin provides an alternative
+      thread-handling model designed to reduce overhead and improve
+      performance. The plugin implements a thread pool that increases
+      server performance by efficiently managing statement execution
+      threads for large numbers of client connections.
+    </p><p>
+      For more information, see <a class="xref" href="server-administration.html#thread-pool" title="5.6.3 MySQL Enterprise Thread Pool">Section 5.6.3, “MySQL Enterprise Thread Pool”</a>.
+</p>
+</div>
+<div class="section">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="mysql-enterprise-data-masking"></a>30.8 MySQL Enterprise Data Masking and De-Identification Overview</h2>
+
+</div>
+
+</div>
+
+</div>
+<a class="indexterm" name="idm140091541709664"></a><a class="indexterm" name="idm140091541708560"></a><p>
+      MySQL Enterprise Edition includes MySQL Enterprise Data Masking and De-Identification, implemented as a plugin library
+      containing a plugin and a set of user-defined functions. Data
+      masking hides sensitive information by replacing real values with
+      substitutes. MySQL Enterprise Data Masking and De-Identification functions enable masking existing data using
+      several methods such as obfuscation (removing identifying
+      characteristics), generation of formatted random data, and data
+      replacement or substitution.
+    </p><p>
+      For more information, see <a class="xref" href="security.html#data-masking" title="6.4.8 MySQL Enterprise Data Masking and De-Identification">Section 6.4.8, “MySQL Enterprise Data Masking and De-Identification”</a>.
+</p>
+</div>
+
+</div>
+<div class="copyright-footer">
+
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left"><a accesskey="p" href="extending-mysql.html">Prev</a></td>
+<td width="20%" align="center"><a accesskey="u" href="">Up</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="workbench.html">Next</a></td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">Chapter 29 Extending MySQL</td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td>
+<td width="40%" align="right" valign="top">Chapter 31 MySQL Workbench</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

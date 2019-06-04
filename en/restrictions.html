@@ -1,0 +1,1788 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Appendix C Restrictions and Limits</title>
+<link rel="stylesheet" href="mvl.css" type="text/css" />
+<meta name="generator" content="DocBook XSL Stylesheets + chunker.py v1.9.2" />
+<link rel="start" href="index.html" title="{book-title}" />
+<link rel="up" href="" title="" />
+<link rel="prev" href="error-handling.html" title="Appendix B Errors, Error Codes, and Common Problems" />
+<link rel="next" href="indexes.html" title="Appendix D Indexes" />
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr>
+<th colspan="3" align="center">Appendix C Restrictions and Limits</th>
+</tr>
+<tr>
+<td width="20%" align="left"><a accesskey="p" href="error-handling.html">Prev</a> </td>
+<th width="60%" align="center"></th>
+<td width="20%" align="right"> <a accesskey="n" href="indexes.html">Next</a></td>
+</tr>
+</table>
+<hr>
+</div>
+<div class="appendix">
+<div class="titlepage">
+<div>
+<div>
+<h1 class="title"><a name="restrictions"></a>Appendix C Restrictions and Limits</h1>
+
+</div>
+
+</div>
+
+</div>
+<div class="toc">
+<p><b>Table of Contents</b></p><dl class="toc"><dt><span class="section"><a href="restrictions.html#stored-program-restrictions">C.1 Restrictions on Stored Programs</a></span></dt><dt><span class="section"><a href="restrictions.html#condition-handling-restrictions">C.2 Restrictions on Condition Handling</a></span></dt><dt><span class="section"><a href="restrictions.html#cursor-restrictions">C.3 Restrictions on Server-Side Cursors</a></span></dt><dt><span class="section"><a href="restrictions.html#subquery-restrictions">C.4 Restrictions on Subqueries</a></span></dt><dt><span class="section"><a href="restrictions.html#view-restrictions">C.5 Restrictions on Views</a></span></dt><dt><span class="section"><a href="restrictions.html#xa-restrictions">C.6 Restrictions on XA Transactions</a></span></dt><dt><span class="section"><a href="restrictions.html#charset-restrictions">C.7 Restrictions on Character Sets</a></span></dt><dt><span class="section"><a href="restrictions.html#performance-schema-restrictions">C.8 Restrictions on Performance Schema</a></span></dt><dt><span class="section"><a href="restrictions.html#pluggable-authentication-restrictions">C.9 Restrictions on Pluggable Authentication</a></span></dt><dt><span class="section"><a href="restrictions.html#limits">C.10 Limits in MySQL</a></span></dt><dd><dl><dt><span class="section"><a href="restrictions.html#joins-limits">C.10.1 Limits on Joins</a></span></dt><dt><span class="section"><a href="restrictions.html#database-count-limit">C.10.2 Limits on Number of Databases and Tables</a></span></dt><dt><span class="section"><a href="restrictions.html#table-size-limit">C.10.3 Limits on Table Size</a></span></dt><dt><span class="section"><a href="restrictions.html#column-count-limit">C.10.4 Limits on Table Column Count and Row Size</a></span></dt><dt><span class="section"><a href="restrictions.html#limits-windows">C.10.5 Windows Platform Limitations</a></span></dt></dl></dd></dl>
+</div>
+<p>
+    The discussion here describes restrictions that apply to the use of
+    MySQL features such as subqueries or views.
+</p>
+<div class="section">
+
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="stored-program-restrictions"></a>C.1 Restrictions on Stored Programs</h2>
+</div>
+</div>
+</div>
+<a class="indexterm" name="idm140091496599264"></a><a class="indexterm" name="idm140091496597776"></a><a class="indexterm" name="idm140091496596288"></a><a class="indexterm" name="idm140091496594800"></a><a class="indexterm" name="idm140091496593312"></a><a class="indexterm" name="idm140091496591824"></a><p>
+      These restrictions apply to the features described in
+      <a class="xref" href="stored-objects.html" title="Chapter 24 Stored Objects">Chapter 24, <i>Stored Objects</i></a>.
+    </p><p>
+      Some of the restrictions noted here apply to all stored routines;
+      that is, both to stored procedures and stored functions. There are
+      also some
+      <a class="link" href="restrictions.html#stored-routines-function-restrictions" title="Restrictions for Stored Functions">restrictions
+      specific to stored functions</a> but not to stored procedures.
+    </p><p>
+      The restrictions for stored functions also apply to triggers.
+      There are also some
+      <a class="link" href="restrictions.html#stored-routines-trigger-restrictions" title="Restrictions for Triggers">restrictions
+      specific to triggers</a>.
+    </p><p>
+      The restrictions for stored procedures also apply to the
+      <a class="link" href="sql-syntax.html#do" title="13.2.3 DO Syntax"><code class="literal">DO</code></a> clause of Event Scheduler event
+      definitions. There are also some
+      <a class="link" href="restrictions.html#stored-routines-event-restrictions" title="Event Scheduler Restrictions">restrictions
+      specific to events</a>.
+</p>
+<h3><a name="stored-routine-sql-restrictions"></a>SQL Statements Not Permitted in Stored Routines</h3>
+<p>
+      Stored routines cannot contain arbitrary SQL statements. The
+      following statements are not permitted:
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          The locking statements <a class="link" href="sql-syntax.html#lock-tables" title="13.3.6 LOCK TABLES and UNLOCK TABLES Syntax"><code class="literal">LOCK
+          TABLES</code></a> and
+          <a class="link" href="sql-syntax.html#lock-tables" title="13.3.6 LOCK TABLES and UNLOCK TABLES Syntax"><code class="literal">UNLOCK
+          TABLES</code></a>.
+        </p></li><li class="listitem"><p>
+          <a class="link" href="sql-syntax.html#alter-view" title="13.1.11 ALTER VIEW Syntax"><code class="literal">ALTER VIEW</code></a>.
+        </p></li><li class="listitem"><p>
+          <a class="link" href="sql-syntax.html#load-data" title="13.2.7 LOAD DATA Syntax"><code class="literal">LOAD DATA</code></a> and <code class="literal">LOAD
+          TABLE</code>.
+        </p></li><li class="listitem"><p>
+          SQL prepared statements
+          (<a class="link" href="sql-syntax.html#prepare" title="13.5.1 PREPARE Syntax"><code class="literal">PREPARE</code></a>,
+          <a class="link" href="sql-syntax.html#execute" title="13.5.2 EXECUTE Syntax"><code class="literal">EXECUTE</code></a>,
+          <a class="link" href="sql-syntax.html#deallocate-prepare" title="13.5.3 DEALLOCATE PREPARE Syntax"><code class="literal">DEALLOCATE PREPARE</code></a>) can be used
+          in stored procedures, but not stored functions or triggers.
+          Thus, stored functions and triggers cannot use dynamic SQL
+          (where you construct statements as strings and then execute
+          them).
+        </p></li><li class="listitem"><p>
+          Generally, statements not permitted in SQL prepared statements
+          are also not permitted in stored programs. For a list of
+          statements supported as prepared statements, see
+          <a class="xref" href="sql-syntax.html#sql-syntax-prepared-statements" title="13.5 Prepared SQL Statement Syntax">Section 13.5, “Prepared SQL Statement Syntax”</a>. Exceptions
+          are <a class="link" href="sql-syntax.html#signal" title="13.6.7.5 SIGNAL Syntax"><code class="literal">SIGNAL</code></a>,
+          <a class="link" href="sql-syntax.html#resignal" title="13.6.7.4 RESIGNAL Syntax"><code class="literal">RESIGNAL</code></a>, and
+          <a class="link" href="sql-syntax.html#get-diagnostics" title="13.6.7.3 GET DIAGNOSTICS Syntax"><code class="literal">GET DIAGNOSTICS</code></a>, which are not
+          permissible as prepared statements but are permitted in stored
+          programs.
+        </p></li><li class="listitem"><p>
+          Because local variables are in scope only during stored
+          program execution, references to them are not permitted in
+          prepared statements created within a stored program. Prepared
+          statement scope is the current session, not the stored
+          program, so the statement could be executed after the program
+          ends, at which point the variables would no longer be in
+          scope. For example, <code class="literal">SELECT ... INTO
+          <em class="replaceable"><code>local_var</code></em></code> cannot be used
+          as a prepared statement. This restriction also applies to
+          stored procedure and function parameters. See
+          <a class="xref" href="sql-syntax.html#prepare" title="13.5.1 PREPARE Syntax">Section 13.5.1, “PREPARE Syntax”</a>.
+        </p></li><li class="listitem"><p>
+          Within all stored programs (stored procedures and functions,
+          triggers, and events), the parser treats
+          <a class="link" href="sql-syntax.html#commit" title="13.3.1 START TRANSACTION, COMMIT, and ROLLBACK Syntax"><code class="literal">BEGIN [WORK]</code></a>
+          as the beginning of a
+          <a class="link" href="sql-syntax.html#begin-end" title="13.6.1 BEGIN ... END Compound-Statement Syntax"><code class="literal">BEGIN ...
+          END</code></a> block. To begin a transaction in this context,
+          use <a class="link" href="sql-syntax.html#commit" title="13.3.1 START TRANSACTION, COMMIT, and ROLLBACK Syntax"><code class="literal">START
+          TRANSACTION</code></a> instead.
+</p></li></ul>
+</div>
+<h3><a name="stored-routines-function-restrictions"></a>Restrictions for Stored Functions</h3>
+<p>
+      The following additional statements or operations are not
+      permitted within stored functions. They are permitted within
+      stored procedures, except stored procedures that are invoked from
+      within a stored function or trigger. For example, if you use
+      <a class="link" href="sql-syntax.html#flush" title="13.7.7.3 FLUSH Syntax"><code class="literal">FLUSH</code></a> in a stored procedure, that
+      stored procedure cannot be called from a stored function or
+      trigger.
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          Statements that perform explicit or implicit commit or
+          rollback. Support for these statements is not required by the
+          SQL standard, which states that each DBMS vendor may decide
+          whether to permit them.
+        </p></li><li class="listitem"><p>
+          Statements that return a result set. This includes
+          <a class="link" href="sql-syntax.html#select" title="13.2.10 SELECT Syntax"><code class="literal">SELECT</code></a> statements that do not
+          have an <code class="literal">INTO
+          <em class="replaceable"><code>var_list</code></em></code> clause and other
+          statements such as <a class="link" href="sql-syntax.html#show" title="13.7.6 SHOW Syntax"><code class="literal">SHOW</code></a>,
+          <a class="link" href="sql-syntax.html#explain" title="13.8.2 EXPLAIN Syntax"><code class="literal">EXPLAIN</code></a>, and
+          <a class="link" href="sql-syntax.html#check-table" title="13.7.3.2 CHECK TABLE Syntax"><code class="literal">CHECK TABLE</code></a>. A function can
+          process a result set either with
+          <a class="link" href="sql-syntax.html#select-into" title="13.2.10.1 SELECT ... INTO Syntax"><code class="literal">SELECT ... INTO
+          <em class="replaceable"><code>var_list</code></em></code></a> or by using a
+          cursor and <a class="link" href="sql-syntax.html#fetch" title="13.6.6.3 Cursor FETCH Syntax"><code class="literal">FETCH</code></a> statements.
+          See <a class="xref" href="sql-syntax.html#select-into" title="13.2.10.1 SELECT ... INTO Syntax">Section 13.2.10.1, “SELECT ... INTO Syntax”</a>, and
+          <a class="xref" href="sql-syntax.html#cursors" title="13.6.6 Cursors">Section 13.6.6, “Cursors”</a>.
+        </p></li><li class="listitem"><p>
+          <a class="link" href="sql-syntax.html#flush" title="13.7.7.3 FLUSH Syntax"><code class="literal">FLUSH</code></a> statements.
+        </p></li><li class="listitem"><p>
+          Stored functions cannot be used recursively.
+        </p></li><li class="listitem"><p>
+          A stored function or trigger cannot modify a table that is
+          already being used (for reading or writing) by the statement
+          that invoked the function or trigger.
+        </p></li><li class="listitem"><p>
+          If you refer to a temporary table multiple times in a stored
+          function under different aliases, a <code class="literal">Can't reopen
+          table:
+          '<em class="replaceable"><code>tbl_name</code></em><code class="literal"></code>'</code>
+          error occurs, even if the references occur in different
+          statements within the function.
+        </p></li><li class="listitem"><p>
+          <a class="link" href="sql-syntax.html#handler" title="13.2.4 HANDLER Syntax"><code class="literal">HANDLER ...
+          READ</code></a> statements that invoke stored functions can
+          cause replication errors and are disallowed.
+</p></li></ul>
+</div>
+<h3><a name="stored-routines-trigger-restrictions"></a>Restrictions for Triggers</h3>
+<p>
+      For triggers, the following additional restrictions apply:
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          Triggers are not activated by foreign key actions.
+        </p></li><li class="listitem"><p>
+          When using row-based replication, triggers on the slave are
+          not activated by statements originating on the master. The
+          triggers on the slave are activated when using statement-based
+          replication. For more information, see
+          <a class="xref" href="replication.html#replication-features-triggers" title="17.4.1.35 Replication and Triggers">Section 17.4.1.35, “Replication and Triggers”</a>.
+        </p></li><li class="listitem"><p>
+          The <a class="link" href="sql-syntax.html#return" title="13.6.5.7 RETURN Syntax"><code class="literal">RETURN</code></a> statement is not
+          permitted in triggers, which cannot return a value. To exit a
+          trigger immediately, use the
+          <a class="link" href="sql-syntax.html#leave" title="13.6.5.4 LEAVE Syntax"><code class="literal">LEAVE</code></a> statement.
+        </p></li><li class="listitem"><p>
+          Triggers are not permitted on tables in the
+          <code class="literal">mysql</code> database. Nor are they permitted on
+          <code class="literal">INFORMATION_SCHEMA</code> or
+          <code class="literal">performance_schema</code> tables. Those tables are
+          actually views and triggers are not permitted on views.
+        </p></li><li class="listitem"><p>
+          The trigger cache does not detect when metadata of the
+          underlying objects has changed. If a trigger uses a table and
+          the table has changed since the trigger was loaded into the
+          cache, the trigger operates using the outdated metadata.
+</p></li></ul>
+</div>
+<h3><a name="stored-routine-name-conflicts"></a>Name Conflicts within Stored Routines</h3>
+<p>
+      The same identifier might be used for a routine parameter, a local
+      variable, and a table column. Also, the same local variable name
+      can be used in nested blocks. For example:
+    </p><pre data-lang="sql" class="programlisting">
+CREATE PROCEDURE p (i INT)
+BEGIN
+  DECLARE i INT DEFAULT 0;
+  SELECT i FROM t;
+  BEGIN
+    DECLARE i INT DEFAULT 1;
+    SELECT i FROM t;
+  END;
+END;
+</pre><p>
+      In such cases, the identifier is ambiguous and the following
+      precedence rules apply:
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          A local variable takes precedence over a routine parameter or
+          table column.
+        </p></li><li class="listitem"><p>
+          A routine parameter takes precedence over a table column.
+        </p></li><li class="listitem"><p>
+          A local variable in an inner block takes precedence over a
+          local variable in an outer block.
+</p></li></ul>
+</div>
+<p>
+      The behavior that variables take precedence over table columns is
+      nonstandard.
+</p>
+<h3><a name="stored-routines-replication-restrictions"></a>Replication Considerations</h3>
+<p>
+      Use of stored routines can cause replication problems. This issue
+      is discussed further in <a class="xref" href="stored-objects.html#stored-programs-logging" title="24.7 Stored Program Binary Logging">Section 24.7, “Stored Program Binary Logging”</a>.
+    </p><p>
+      The
+      <a class="link" href="replication.html#option_mysqld_replicate-wild-do-table"><code class="option">--replicate-wild-do-table=<em class="replaceable"><code>db_name.tbl_name</code></em></code></a>
+      option applies to tables, views, and triggers. It does not apply
+      to stored procedures and functions, or events. To filter
+      statements operating on the latter objects, use one or more of the
+      <code class="option">--replicate-*-db</code> options.
+</p>
+<h3><a name="stored-routines-debugging-restrictions"></a>Debugging Considerations</h3>
+<p>
+      There are no stored routine debugging facilities.
+</p>
+<h3><a name="stored-routines-standard-restrictions"></a>Unsupported Syntax from the SQL:2003 Standard</h3>
+<p>
+      The MySQL stored routine syntax is based on the SQL:2003 standard.
+      The following items from that standard are not currently
+      supported:
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          <code class="literal">UNDO</code> handlers
+        </p></li><li class="listitem"><p>
+          <code class="literal">FOR</code> loops
+</p></li></ul>
+</div>
+<h3><a name="idm140091496500304"></a>Concurrency Considerations</h3>
+<p>
+      To prevent problems of interaction between sessions, when a client
+      issues a statement, the server uses a snapshot of routines and
+      triggers available for execution of the statement. That is, the
+      server calculates a list of procedures, functions, and triggers
+      that may be used during execution of the statement, loads them,
+      and then proceeds to execute the statement. While the statement
+      executes, it does not see changes to routines performed by other
+      sessions.
+    </p><p>
+      For maximum concurrency, stored functions should minimize their
+      side-effects; in particular, updating a table within a stored
+      function can reduce concurrent operations on that table. A stored
+      function acquires table locks before executing, to avoid
+      inconsistency in the binary log due to mismatch of the order in
+      which statements execute and when they appear in the log. When
+      statement-based binary logging is used, statements that invoke a
+      function are recorded rather than the statements executed within
+      the function. Consequently, stored functions that update the same
+      underlying tables do not execute in parallel. In contrast, stored
+      procedures do not acquire table-level locks. All statements
+      executed within stored procedures are written to the binary log,
+      even for statement-based binary logging. See
+      <a class="xref" href="stored-objects.html#stored-programs-logging" title="24.7 Stored Program Binary Logging">Section 24.7, “Stored Program Binary Logging”</a>.
+</p>
+<h3><a name="stored-routines-event-restrictions"></a>Event Scheduler Restrictions</h3>
+<p>
+      The following limitations are specific to the Event Scheduler:
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          Event names are handled in case-insensitive fashion. For
+          example, you cannot have two events in the same database with
+          the names <code class="literal">anEvent</code> and
+          <code class="literal">AnEvent</code>.
+        </p></li><li class="listitem"><p>
+          An event may not be created, altered, or dropped from within a
+          stored program, if the event name is specified by means of a
+          variable. An event also may not create, alter, or drop stored
+          routines or triggers.
+        </p></li><li class="listitem"><p>
+          DDL statements on events are prohibited while a
+          <a class="link" href="sql-syntax.html#lock-tables" title="13.3.6 LOCK TABLES and UNLOCK TABLES Syntax"><code class="literal">LOCK TABLES</code></a> statement is in
+          effect.
+        </p></li><li class="listitem"><p>
+          Event timings using the intervals <code class="literal">YEAR</code>,
+          <code class="literal">QUARTER</code>, <code class="literal">MONTH</code>, and
+          <code class="literal">YEAR_MONTH</code> are resolved in months; those
+          using any other interval are resolved in seconds. There is no
+          way to cause events scheduled to occur at the same second to
+          execute in a given order. In addition—due to rounding,
+          the nature of threaded applications, and the fact that a
+          nonzero length of time is required to create events and to
+          signal their execution—events may be delayed by as much
+          as 1 or 2 seconds. However, the time shown in the
+          <a class="link" href="information-schema.html#events-table" title="25.10 The INFORMATION_SCHEMA EVENTS Table"><code class="literal">INFORMATION_SCHEMA.EVENTS</code></a> table's
+          <code class="literal">LAST_EXECUTED</code> column or the
+          <code class="literal">mysql.event</code> table's
+          <code class="literal">last_executed</code> column is always accurate to
+          within one second of the actual event execution time. (See
+          also Bug #16522.)
+        </p></li><li class="listitem"><p>
+          Each execution of the statements contained in the body of an
+          event takes place in a new connection; thus, these statements
+          has no effect in a given user session on the server's
+          statement counts such as <code class="literal">Com_select</code> and
+          <code class="literal">Com_insert</code> that are displayed by
+          <a class="link" href="sql-syntax.html#show-status" title="13.7.6.35 SHOW STATUS Syntax"><code class="literal">SHOW STATUS</code></a>. However, such
+          counts <span class="emphasis"><em>are</em></span> updated in the global scope.
+          (Bug #16422)
+        </p></li><li class="listitem"><p>
+          Events do not support times later than the end of the Unix
+          Epoch; this is approximately the beginning of the year 2038.
+          Such dates are specifically not permitted by the Event
+          Scheduler. (Bug #16396)
+        </p></li><li class="listitem"><p>
+          References to stored functions, user-defined functions, and
+          tables in the <code class="literal">ON SCHEDULE</code> clauses of
+          <a class="link" href="sql-syntax.html#create-event" title="13.1.13 CREATE EVENT Syntax"><code class="literal">CREATE EVENT</code></a> and
+          <a class="link" href="sql-syntax.html#alter-event" title="13.1.3 ALTER EVENT Syntax"><code class="literal">ALTER EVENT</code></a> statements are not
+          supported. These sorts of references are not permitted. (See
+          Bug #22830 for more information.)
+</p></li></ul>
+</div>
+<p><b>Stored routines and triggers in NDB Cluster. </b>
+        Stored procedures, stored functions, and triggers are all
+        supported by tables using the <a class="link" href="mysql-cluster.html" title="Chapter 22 MySQL NDB Cluster 8.0"><code class="literal">NDB</code></a>
+        storage engine; however, it is important to keep in mind that
+        they do <span class="emphasis"><em>not</em></span> propagate automatically between
+        MySQL Servers acting as Cluster SQL nodes. This is because
+        stored routine and trigger definitions are stored in tables in
+        the <code class="literal">mysql</code> system database using
+        <code class="literal">InnoDB</code> tables, which are not copied between
+        Cluster nodes.
+      </p><p>
+      Any stored routine or trigger that interacts with MySQL Cluster
+      tables must be re-created by running the appropriate
+      <a class="link" href="sql-syntax.html#create-procedure" title="13.1.17 CREATE PROCEDURE and CREATE FUNCTION Syntax"><code class="literal">CREATE PROCEDURE</code></a>,
+      <a class="link" href="sql-syntax.html#create-function" title="13.1.14 CREATE FUNCTION Syntax"><code class="literal">CREATE FUNCTION</code></a>, or
+      <a class="link" href="sql-syntax.html#create-trigger" title="13.1.22 CREATE TRIGGER Syntax"><code class="literal">CREATE TRIGGER</code></a> statements on each
+      MySQL Server that participates in the cluster where you wish to
+      use the stored routine or trigger. Similarly, any changes to
+      existing stored routines or triggers must be carried out
+      explicitly on all Cluster SQL nodes, using the appropriate
+      <code class="literal">ALTER</code> or <code class="literal">DROP</code> statements on
+      each MySQL Server accessing the cluster.
+</p>
+<div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+
+<div class="admon-title">
+Warning
+</div>
+<p>
+        Do <span class="emphasis"><em>not</em></span> attempt to work around the issue
+        just described by converting any <code class="literal">mysql</code>
+        database tables to use the <a class="link" href="mysql-cluster.html" title="Chapter 22 MySQL NDB Cluster 8.0"><code class="literal">NDB</code></a>
+        storage engine. <span class="emphasis"><em>Altering the system tables in the
+        <code class="literal">mysql</code> database is not supported</em></span>
+        and is very likely to produce undesirable results.
+</p>
+</div>
+
+</div>
+<div class="section">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="condition-handling-restrictions"></a>C.2 Restrictions on Condition Handling</h2>
+
+</div>
+
+</div>
+
+</div>
+<a class="indexterm" name="idm140091496454112"></a><a class="indexterm" name="idm140091496452624"></a><p>
+      <a class="link" href="sql-syntax.html#signal" title="13.6.7.5 SIGNAL Syntax"><code class="literal">SIGNAL</code></a>,
+      <a class="link" href="sql-syntax.html#resignal" title="13.6.7.4 RESIGNAL Syntax"><code class="literal">RESIGNAL</code></a>, and
+      <a class="link" href="sql-syntax.html#get-diagnostics" title="13.6.7.3 GET DIAGNOSTICS Syntax"><code class="literal">GET DIAGNOSTICS</code></a> are not permissible
+      as prepared statements. For example, this statement is invalid:
+    </p><pre data-lang="sql" class="programlisting">
+PREPARE stmt1 FROM 'SIGNAL SQLSTATE "02000"';
+</pre><p>
+      <code class="literal">SQLSTATE</code> values in class
+      <code class="literal">'04'</code> are not treated specially. They are
+      handled the same as other exceptions.
+    </p><p>
+      In standard SQL, the first condition relates to the
+      <code class="literal">SQLSTATE</code> value returned for the previous SQL
+      statement. In MySQL, this is not guaranteed, so to get the main
+      error, you cannot do this:
+    </p><pre data-lang="sql" class="programlisting">
+GET DIAGNOSTICS CONDITION 1 @errno = MYSQL_ERRNO;
+</pre><p>
+      Instead, do this:
+    </p><pre data-lang="sql" class="programlisting">
+GET DIAGNOSTICS @cno = NUMBER;
+GET DIAGNOSTICS CONDITION @cno @errno = MYSQL_ERRNO;
+</pre>
+</div>
+<div class="section">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="cursor-restrictions"></a>C.3 Restrictions on Server-Side Cursors</h2>
+
+</div>
+
+</div>
+
+</div>
+<a class="indexterm" name="idm140091496439168"></a><a class="indexterm" name="idm140091496437712"></a><p>
+      Server-side cursors are implemented in the C API using the
+      <a class="link" href="connectors-apis.html#mysql-stmt-attr-set" title="28.7.11.3 mysql_stmt_attr_set()"><code class="literal">mysql_stmt_attr_set()</code></a> function.
+      The same implementation is used for cursors in stored routines. A
+      server-side cursor enables a result set to be generated on the
+      server side, but not transferred to the client except for those
+      rows that the client requests. For example, if a client executes a
+      query but is only interested in the first row, the remaining rows
+      are not transferred.
+    </p><p>
+      In MySQL, a server-side cursor is materialized into an internal
+      temporary table. Initially, this is a <code class="literal">MEMORY</code>
+      table, but is converted to a <code class="literal">MyISAM</code> table when
+      its size exceeds the minimum value of the
+      <a class="link" href="server-administration.html#sysvar_max_heap_table_size"><code class="literal">max_heap_table_size</code></a> and
+      <a class="link" href="server-administration.html#sysvar_tmp_table_size"><code class="literal">tmp_table_size</code></a> system variables.
+      The same restrictions apply to internal temporary tables created
+      to hold the result set for a cursor as for other uses of internal
+      temporary tables. See <a class="xref" href="optimization.html#internal-temporary-tables" title="8.4.4 Internal Temporary Table Use in MySQL">Section 8.4.4, “Internal Temporary Table Use in MySQL”</a>.
+      One limitation of the implementation is that for a large result
+      set, retrieving its rows through a cursor might be slow.
+    </p><p>
+      Cursors are read only; you cannot use a cursor to update rows.
+    </p><p>
+      <code class="literal">UPDATE WHERE CURRENT OF</code> and <code class="literal">DELETE
+      WHERE CURRENT OF</code> are not implemented, because updatable
+      cursors are not supported.
+    </p><p>
+      Cursors are nonholdable (not held open after a commit).
+    </p><p>
+      Cursors are asensitive.
+    </p><p>
+      Cursors are nonscrollable.
+    </p><p>
+      Cursors are not named. The statement handler acts as the cursor
+      ID.
+    </p><p>
+      You can have open only a single cursor per prepared statement. If
+      you need several cursors, you must prepare several statements.
+    </p><p>
+      You cannot use a cursor for a statement that generates a result
+      set if the statement is not supported in prepared mode. This
+      includes statements such as <a class="link" href="sql-syntax.html#check-table" title="13.7.3.2 CHECK TABLE Syntax"><code class="literal">CHECK
+      TABLE</code></a>, <code class="literal">HANDLER READ</code>, and
+      <a class="link" href="sql-syntax.html#show-binlog-events" title="13.7.6.2 SHOW BINLOG EVENTS Syntax"><code class="literal">SHOW BINLOG EVENTS</code></a>.
+</p>
+</div>
+
+<div class="section">
+
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="subquery-restrictions"></a>C.4 Restrictions on Subqueries</h2>
+
+</div>
+
+</div>
+
+</div>
+<a class="indexterm" name="idm140091496418912"></a><a class="indexterm" name="idm140091496417456"></a>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          In general, you cannot modify a table and select from the same
+          table in a subquery. For example, this limitation applies to
+          statements of the following forms:
+        </p><pre data-lang="sql" class="programlisting">
+DELETE FROM t WHERE ... (SELECT ... FROM t ...);
+UPDATE t ... WHERE col = (SELECT ... FROM t ...);
+{INSERT|REPLACE} INTO t (SELECT ... FROM t ...);
+</pre><p>
+          Exception: The preceding prohibition does not apply if for the
+          modified table you are using a derived table and that derived
+          table is materialized rather than merged into the outer query.
+          (See <a class="xref" href="optimization.html#derived-table-optimization" title="8.2.2.4 Optimizing Derived Tables, View References, and Common Table Expressions with Merging or Materialization">Section 8.2.2.4, “Optimizing Derived Tables, View References, and Common Table Expressions
+          with Merging or Materialization”</a>.) Example:
+        </p><pre data-lang="sql" class="programlisting">
+UPDATE t ... WHERE col = (SELECT * FROM (SELECT ... FROM t...) AS dt ...);
+</pre><p>
+          Here the result from the derived table is materialized as a
+          temporary table, so the relevant rows in <code class="literal">t</code>
+          have already been selected by the time the update to
+          <code class="literal">t</code> takes place.
+        </p><p>
+          In general, you may be able to influence the optimizer to
+          materialize a derived table by adding a
+          <a class="link" href="optimization.html#optimizer-hints-table-level" title="Table-Level Optimizer Hints"><code class="literal">NO_MERGE</code></a> optimizer hint. See
+          <a class="xref" href="optimization.html#optimizer-hints" title="8.9.3 Optimizer Hints">Section 8.9.3, “Optimizer Hints”</a>.
+        </p></li><li class="listitem"><p>
+          Row comparison operations are only partially supported:
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p>
+              For <code class="literal"><em class="replaceable"><code>expr</code></em> [NOT] IN
+              <em class="replaceable"><code>subquery</code></em></code>,
+              <em class="replaceable"><code>expr</code></em> can be an
+              <em class="replaceable"><code>n</code></em>-tuple (specified using row
+              constructor syntax) and the subquery can return rows of
+              <em class="replaceable"><code>n</code></em>-tuples. The permitted syntax
+              is therefore more specifically expressed as
+              <code class="literal"><em class="replaceable"><code>row_constructor</code></em> [NOT]
+              IN <em class="replaceable"><code>table_subquery</code></em></code>
+            </p></li><li class="listitem"><p>
+              For <code class="literal"><em class="replaceable"><code>expr</code></em>
+              <em class="replaceable"><code>op</code></em> {ALL|ANY|SOME}
+              <em class="replaceable"><code>subquery</code></em></code>,
+              <em class="replaceable"><code>expr</code></em> must be a scalar value and
+              the subquery must be a column subquery; it cannot return
+              multiple-column rows.
+</p></li></ul>
+</div>
+<p>
+          In other words, for a subquery that returns rows of
+          <em class="replaceable"><code>n</code></em>-tuples, this is supported:
+        </p><pre data-lang="sql" class="programlisting">
+(<em class="replaceable"><code>expr_1</code></em>, ..., <em class="replaceable"><code>expr_n</code></em>) [NOT] IN <em class="replaceable"><code>table_subquery</code></em>
+</pre><p>
+          But this is not supported:
+        </p><pre data-lang="sql" class="programlisting">
+(<em class="replaceable"><code>expr_1</code></em>, ..., <em class="replaceable"><code>expr_n</code></em>) <em class="replaceable"><code>op</code></em> {ALL|ANY|SOME} <em class="replaceable"><code>subquery</code></em>
+</pre><p>
+          The reason for supporting row comparisons for
+          <code class="literal">IN</code> but not for the others is that
+          <code class="literal">IN</code> is implemented by rewriting it as a
+          sequence of <a class="link" href="functions.html#operator_equal"><code class="literal">=</code></a>
+          comparisons and <a class="link" href="functions.html#operator_and"><code class="literal">AND</code></a> operations.
+          This approach cannot be used for <code class="literal">ALL</code>,
+          <code class="literal">ANY</code>, or <code class="literal">SOME</code>.
+        </p></li><li class="listitem"><p>
+          Subqueries in the <code class="literal">FROM</code> clause cannot be
+          correlated subqueries. They are materialized in whole
+          (evaluated to produce a result set) during query execution, so
+          they cannot be evaluated per row of the outer query. The
+          optimizer delays materialization until the result is needed,
+          which may permit materialization to be avoided. See
+          <a class="xref" href="optimization.html#derived-table-optimization" title="8.2.2.4 Optimizing Derived Tables, View References, and Common Table Expressions with Merging or Materialization">Section 8.2.2.4, “Optimizing Derived Tables, View References, and Common Table Expressions
+          with Merging or Materialization”</a>.
+        </p></li><li class="listitem"><p>
+          MySQL does not support <code class="literal">LIMIT</code> in subqueries
+          for certain subquery operators:
+        </p><pre data-lang="sql" class="programlisting">
+mysql&gt; <strong class="userinput"><code>SELECT * FROM t1</code></strong>
+       <strong class="userinput"><code>WHERE s1 IN (SELECT s2 FROM t2 ORDER BY s1 LIMIT 1);</code></strong>
+ERROR 1235 (42000): This version of MySQL doesn't yet support
+ 'LIMIT &amp; IN/ALL/ANY/SOME subquery'
+</pre></li><li class="listitem"><p>
+          MySQL permits a subquery to refer to a stored function that
+          has data-modifying side effects such as inserting rows into a
+          table. For example, if <code class="literal">f()</code> inserts rows,
+          the following query can modify data:
+        </p><pre data-lang="sql" class="programlisting">
+SELECT ... WHERE x IN (SELECT f() ...);
+</pre><p>
+          This behavior is an extension to the SQL standard. In MySQL,
+          it can produce nondeterministic results because
+          <code class="literal">f()</code> might be executed a different number of
+          times for different executions of a given query depending on
+          how the optimizer chooses to handle it.
+        </p><p>
+          For statement-based or mixed-format replication, one
+          implication of this indeterminism is that such a query can
+          produce different results on the master and its slaves.
+</p></li></ul>
+</div>
+
+</div>
+<div class="section">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="view-restrictions"></a>C.5 Restrictions on Views</h2>
+
+</div>
+
+</div>
+
+</div>
+<a class="indexterm" name="idm140091496372016"></a><a class="indexterm" name="idm140091496370528"></a><p>
+      View processing is not optimized:
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          It is not possible to create an index on a view.
+        </p></li><li class="listitem"><p>
+          Indexes can be used for views processed using the merge
+          algorithm. However, a view that is processed with the
+          temptable algorithm is unable to take advantage of indexes on
+          its underlying tables (although indexes can be used during
+          generation of the temporary tables).
+</p></li></ul>
+</div>
+<p>
+      There is a general principle that you cannot modify a table and
+      select from the same table in a subquery. See
+      <a class="xref" href="restrictions.html#subquery-restrictions" title="C.4 Restrictions on Subqueries">Section C.4, “Restrictions on Subqueries”</a>.
+    </p><p>
+      The same principle also applies if you select from a view that
+      selects from the table, if the view selects from the table in a
+      subquery and the view is evaluated using the merge algorithm.
+      Example:
+    </p><pre data-lang="sql" class="programlisting">
+CREATE VIEW v1 AS
+SELECT * FROM t2 WHERE EXISTS (SELECT 1 FROM t1 WHERE t1.a = t2.a);
+
+UPDATE t1, v2 SET t1.a = 1 WHERE t1.b = v2.b;
+</pre><p>
+      If the view is evaluated using a temporary table, you
+      <span class="emphasis"><em>can</em></span> select from the table in the view
+      subquery and still modify that table in the outer query. In this
+      case the view will be stored in a temporary table and thus you are
+      not really selecting from the table in a subquery and modifying it
+      <span class="quote">“<span class="quote">at the same time.</span>”</span> (This is another reason you might
+      wish to force MySQL to use the temptable algorithm by specifying
+      <code class="literal">ALGORITHM = TEMPTABLE</code> in the view definition.)
+    </p><p>
+      You can use <a class="link" href="sql-syntax.html#drop-table" title="13.1.32 DROP TABLE Syntax"><code class="literal">DROP TABLE</code></a> or
+      <a class="link" href="sql-syntax.html#alter-table" title="13.1.9 ALTER TABLE Syntax"><code class="literal">ALTER TABLE</code></a> to drop or alter a
+      table that is used in a view definition. No warning results from
+      the <code class="literal">DROP</code> or <code class="literal">ALTER</code> operation,
+      even though this invalidates the view. Instead, an error occurs
+      later, when the view is used. <a class="link" href="sql-syntax.html#check-table" title="13.7.3.2 CHECK TABLE Syntax"><code class="literal">CHECK
+      TABLE</code></a> can be used to check for views that have been
+      invalidated by <code class="literal">DROP</code> or <code class="literal">ALTER</code>
+      operations.
+    </p><p>
+      With regard to view updatability, the overall goal for views is
+      that if any view is theoretically updatable, it should be
+      updatable in practice. MySQL as quickly as possible. Many
+      theoretically updatable views can be updated now, but limitations
+      still exist. For details, see <a class="xref" href="stored-objects.html#view-updatability" title="24.5.3 Updatable and Insertable Views">Section 24.5.3, “Updatable and Insertable Views”</a>.
+    </p><a class="indexterm" name="idm140091496352400"></a><a class="indexterm" name="idm140091496350912"></a><a class="indexterm" name="idm140091496349424"></a><a class="indexterm" name="idm140091496347936"></a><a class="indexterm" name="idm140091496346448"></a><a class="indexterm" name="idm140091496344960"></a><p>
+      There exists a shortcoming with the current implementation of
+      views. If a user is granted the basic privileges necessary to
+      create a view (the <a class="link" href="security.html#priv_create-view"><code class="literal">CREATE VIEW</code></a> and
+      <a class="link" href="security.html#priv_select"><code class="literal">SELECT</code></a> privileges), that user will
+      be unable to call <a class="link" href="sql-syntax.html#show-create-view" title="13.7.6.13 SHOW CREATE VIEW Syntax"><code class="literal">SHOW CREATE VIEW</code></a>
+      on that object unless the user is also granted the
+      <a class="link" href="security.html#priv_show-view"><code class="literal">SHOW VIEW</code></a> privilege.
+    </p><p>
+      That shortcoming can lead to problems backing up a database with
+      <a class="link" href="programs.html#mysqldump" title="4.5.4 mysqldump — A Database Backup Program"><span class="command"><strong>mysqldump</strong></span></a>, which may fail due to insufficient
+      privileges. This problem is described in Bug #22062.
+    </p><p>
+      The workaround to the problem is for the administrator to manually
+      grant the <a class="link" href="security.html#priv_show-view"><code class="literal">SHOW VIEW</code></a> privilege to
+      users who are granted <a class="link" href="security.html#priv_create-view"><code class="literal">CREATE VIEW</code></a>,
+      since MySQL doesn't grant it implicitly when views are created.
+    </p><p>
+      Views do not have indexes, so index hints do not apply. Use of
+      index hints when selecting from a view is not permitted.
+    </p><p>
+      <a class="link" href="sql-syntax.html#show-create-view" title="13.7.6.13 SHOW CREATE VIEW Syntax"><code class="literal">SHOW CREATE VIEW</code></a> displays view
+      definitions using an <code class="literal">AS
+      <em class="replaceable"><code>alias_name</code></em></code> clause for each
+      column. If a column is created from an expression, the default
+      alias is the expression text, which can be quite long. Aliases for
+      column names in <a class="link" href="sql-syntax.html#create-view" title="13.1.23 CREATE VIEW Syntax"><code class="literal">CREATE VIEW</code></a>
+      statements are checked against the maximum column length of 64
+      characters (not the maximum alias length of 256 characters). As a
+      result, views created from the output of <a class="link" href="sql-syntax.html#show-create-view" title="13.7.6.13 SHOW CREATE VIEW Syntax"><code class="literal">SHOW
+      CREATE VIEW</code></a> fail if any column alias exceeds 64
+      characters. This can cause problems in the following circumstances
+      for views with too-long aliases:
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          View definitions fail to replicate to newer slaves that
+          enforce the column-length restriction.
+        </p></li><li class="listitem"><p>
+          Dump files created with <a class="link" href="programs.html#mysqldump" title="4.5.4 mysqldump — A Database Backup Program"><span class="command"><strong>mysqldump</strong></span></a> cannot be
+          loaded into servers that enforce the column-length
+          restriction.
+</p></li></ul>
+</div>
+<p>
+      A workaround for either problem is to modify each problematic view
+      definition to use aliases that provide shorter column names. Then
+      the view will replicate properly, and can be dumped and reloaded
+      without causing an error. To modify the definition, drop and
+      create the view again with <a class="link" href="sql-syntax.html#drop-view" title="13.1.35 DROP VIEW Syntax"><code class="literal">DROP
+      VIEW</code></a> and <a class="link" href="sql-syntax.html#create-view" title="13.1.23 CREATE VIEW Syntax"><code class="literal">CREATE VIEW</code></a>, or
+      replace the definition with
+      <a class="link" href="sql-syntax.html#create-view" title="13.1.23 CREATE VIEW Syntax"><code class="literal">CREATE OR REPLACE
+      VIEW</code></a>.
+    </p><p>
+      For problems that occur when reloading view definitions in dump
+      files, another workaround is to edit the dump file to modify its
+      <a class="link" href="sql-syntax.html#create-view" title="13.1.23 CREATE VIEW Syntax"><code class="literal">CREATE VIEW</code></a> statements. However,
+      this does not change the original view definitions, which may
+      cause problems for subsequent dump operations.
+</p>
+</div>
+<div class="section">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="xa-restrictions"></a>C.6 Restrictions on XA Transactions</h2>
+
+</div>
+
+</div>
+
+</div>
+<a class="indexterm" name="idm140091496315904"></a><a class="indexterm" name="idm140091496314448"></a><p>
+      XA transaction support is limited to the <code class="literal">InnoDB</code>
+      storage engine.
+    </p><p>
+      For <span class="quote">“<span class="quote">external XA,</span>”</span> a MySQL server acts as a Resource
+      Manager and client programs act as Transaction Managers. For
+      <span class="quote">“<span class="quote">Internal XA</span>”</span>, storage engines within a MySQL server
+      act as RMs, and the server itself acts as a TM. Internal XA
+      support is limited by the capabilities of individual storage
+      engines. Internal XA is required for handling XA transactions that
+      involve more than one storage engine. The implementation of
+      internal XA requires that a storage engine support two-phase
+      commit at the table handler level, and currently this is true only
+      for <code class="literal">InnoDB</code>.
+    </p><p>
+      For <a class="link" href="sql-syntax.html#xa-statements" title="13.3.8.1 XA Transaction SQL Syntax"><code class="literal">XA
+      START</code></a>, the <code class="literal">JOIN</code> and
+      <code class="literal">RESUME</code> clauses are not supported.
+    </p><p>
+      For <a class="link" href="sql-syntax.html#xa-statements" title="13.3.8.1 XA Transaction SQL Syntax"><code class="literal">XA
+      END</code></a>, the <code class="literal">SUSPEND [FOR MIGRATE]</code> clause
+      is not supported.
+    </p><p>
+      The requirement that the <em class="replaceable"><code>bqual</code></em> part of
+      the <em class="replaceable"><code>xid</code></em> value be different for each XA
+      transaction within a global transaction is a limitation of the
+      current MySQL XA implementation. It is not part of the XA
+      specification.
+    </p><p>
+      An XA transaction is written to the binary log in two parts. When
+      <code class="literal">XA PREPARE </code> is issued, the first part of the
+      transaction up to <code class="literal">XA PREPARE</code> is written using
+      an initial GTID. A <code class="literal">XA_prepare_log_event</code> is used
+      to identify such transactions in the binary log. When <code class="literal">XA
+      COMMIT</code> or <code class="literal">XA ROLLBACK</code> is issued, a
+      second part of the transaction containing only the <code class="literal">XA
+      COMMIT</code> or <code class="literal">XA ROLLBACK</code> statement is
+      written using a second GTID. Note that the initial part of the
+      transaction, identified by
+      <code class="literal">XA_prepare_log_event</code>, is not necessarily
+      followed by its <code class="literal">XA COMMIT</code> or <code class="literal">XA
+      ROLLBACK</code>, which can cause interleaved binary logging of
+      any two XA transactions. The two parts of the XA transaction can
+      even appear in different binary log files. This means that an XA
+      transaction in <code class="literal">PREPARED</code> state is now persistent
+      until an explicit <code class="literal">XA COMMIT</code> or <code class="literal">XA
+      ROLLBACK</code> statement is issued, ensuring that XA
+      transactions are compatible with replication.
+    </p><p>
+      On a replication slave, immediately after the XA transaction is
+      prepared, it is detached from the slave applier thread, and can be
+      committed or rolled back by any thread on the slave. This means
+      that the same XA transaction can appear in the
+      <a class="link" href="performance-schema.html#events-transactions-current-table" title="26.12.7.1 The events_transactions_current Table"><code class="literal">events_transactions_current</code></a> table
+      with different states on different threads. The
+      <a class="link" href="performance-schema.html#events-transactions-current-table" title="26.12.7.1 The events_transactions_current Table"><code class="literal">events_transactions_current</code></a> table
+      displays the current status of the most recent monitored
+      transaction event on the thread, and does not update this status
+      when the thread is idle. So the XA transaction can still be
+      displayed in the <code class="literal">PREPARED</code> state for the
+      original applier thread, after it has been processed by another
+      thread. To positively identify XA transactions that are still in
+      the <code class="literal">PREPARED</code> state and need to be recovered,
+      use the <a class="link" href="sql-syntax.html#xa-statements" title="13.3.8.1 XA Transaction SQL Syntax"><code class="literal">XA
+      RECOVER</code></a> statement rather than the Performance Schema
+      transaction tables.
+    </p><p>
+      The following restrictions exist for using XA transactions:
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          XA transactions are not fully resilient to an unexpected halt
+          with respect to the binary log. If there is an unexpected halt
+          while the server is in the middle of executing an <code class="literal">XA
+          PREPARE</code>, <code class="literal">XA COMMIT</code>, <code class="literal">XA
+          ROLLBACK</code>, or <code class="literal">XA COMMIT ... ONE
+          PHASE</code> statement, the server might not be able to
+          recover to a correct state, leaving the server and the binary
+          log in an inconsistent state. In this situation, the binary
+          log might either contain extra XA transactions that are not
+          applied, or miss XA transactions that are applied. Also, if
+          GTIDs are enabled, after recovery
+          <code class="literal">@@GLOBAL.GTID_EXECUTED</code> might not correctly
+          describe the transactions that have been applied. Note that if
+          an unexpected halt occurs before <code class="literal">XA
+          PREPARE</code>, between <code class="literal">XA PREPARE</code> and
+          <code class="literal">XA COMMIT</code> (or <code class="literal">XA
+          ROLLBACK</code>), or after <code class="literal">XA COMMIT</code> (or
+          <code class="literal">XA ROLLBACK</code>), the server and binary log are
+          correctly recovered and taken to a consistent state.
+        </p></li><li class="listitem"><p>
+          The use of replication filters or binary log filters in
+          combination with XA transactions is not supported. Filtering
+          of tables could cause an XA transaction to be empty on a
+          replication slave, and empty XA transactions are not
+          supported. Also, with the settings
+          <a class="link" href="replication.html#sysvar_master_info_repository"><code class="literal">master_info_repository=TABLE</code></a>
+          and
+          <a class="link" href="replication.html#sysvar_relay_log_info_repository"><code class="literal">relay_log_info_repository=TABLE</code></a>
+          on a replication slave, which became the defaults in MySQL
+          8.0, the internal state of the data engine transaction is
+          changed following a filtered XA transaction, and can become
+          inconsistent with the replication transaction context state.
+        </p><p>
+          The error
+          <a class="link" href="error-handling.html#error_er_xa_replication_filters"><code class="literal">ER_XA_REPLICATION_FILTERS</code></a> is
+          logged whenever an XA transaction is impacted by a replication
+          filter, whether or not the transaction was empty as a result.
+          If the transaction is not empty, the replication slave is able
+          to continue running, but you should take steps to discontinue
+          the use of replication filters with XA transactions in order
+          to avoid potential issues. If the transaction is empty, the
+          replication slave stops. In that event, the replication slave
+          might be in an undetermined state in which the consistency of
+          the replication process might be compromised. In particular,
+          the <code class="literal">gtid_executed</code> set on a slave of the
+          slave might be inconsistent with that on the master. To
+          resolve this situation, isolate the master and stop all
+          replication, then check GTID consistency across the
+          replication topology. Undo the XA transaction that generated
+          the error message, then restart replication.
+        </p></li><li class="listitem"><p>
+          XA transactions are considered unsafe for statement-based
+          replication. If two XA transactions committed in parallel on
+          the master are being prepared on the slave in the inverse
+          order, locking dependencies can occur that cannot be safely
+          resolved, and it is possible for replication to fail with
+          deadlock on the slave. This situation can occur for a
+          single-threaded or multithreaded replication slave. When
+          <a class="link" href="replication.html#sysvar_binlog_format"><code class="literal">binlog_format=STATEMENT</code></a> is
+          set, a warning is issued for DML statements inside XA
+          transactions. When
+          <a class="link" href="replication.html#sysvar_binlog_format"><code class="literal">binlog_format=MIXED</code></a> or
+          <a class="link" href="replication.html#sysvar_binlog_format"><code class="literal">binlog_format=ROW</code></a> is set, DML
+          statements inside XA transactions are logged using row-based
+          replication, and the potential issue is not present.
+</p></li></ul>
+</div>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+<div class="admon-title">
+Note
+</div>
+<p>
+        Prior to MySQL 5.7.7, XA transactions were not compatible with
+        replication at all. This was because an XA transaction that was
+        in <code class="literal">PREPARED</code> state would be rolled back on
+        clean server shutdown or client disconnect. Similarly, an XA
+        transaction that was in <code class="literal">PREPARED</code> state would
+        still exist in <code class="literal">PREPARED</code> state in case the
+        server was shutdown abnormally and then started again, but the
+        contents of the transaction could not be written to the binary
+        log. In both of these situations the XA transaction could not be
+        replicated correctly.
+</p>
+</div>
+
+</div>
+
+<div class="section">
+
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="charset-restrictions"></a>C.7 Restrictions on Character Sets</h2>
+
+</div>
+
+</div>
+
+</div>
+<a class="indexterm" name="idm140091496256976"></a><a class="indexterm" name="idm140091496255520"></a>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          Identifiers are stored in <code class="literal">mysql</code> database
+          tables (<code class="literal">user</code>, <code class="literal">db</code>, and so
+          forth) using <code class="literal">utf8</code>, but identifiers can
+          contain only characters in the Basic Multilingual Plane (BMP).
+          Supplementary characters are not permitted in identifiers.
+        </p></li><li class="listitem"><p>
+          The <code class="literal">ucs2</code>, <code class="literal">utf16</code>,
+          <code class="literal">utf16le</code>, and <code class="literal">utf32</code>
+          character sets have the following restrictions:
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p>
+              None of them can be used as the client character set. See
+              <a class="xref" href="charset.html#charset-connection-impermissible-client-charset" title="Impermissible Client Character Sets">Impermissible Client Character Sets</a>.
+            </p></li><li class="listitem"><p>
+              It is currently not possible to use
+              <a class="link" href="sql-syntax.html#load-data" title="13.2.7 LOAD DATA Syntax"><code class="literal">LOAD DATA</code></a> to load data
+              files that use these character sets.
+            </p></li><li class="listitem"><p>
+              <code class="literal">FULLTEXT</code> indexes cannot be created on a
+              column that uses any of these character sets. However, you
+              can perform <code class="literal">IN BOOLEAN MODE</code> searches on
+              the column without an index.
+</p></li></ul>
+</div>
+</li><li class="listitem"><p>
+          The <a class="link" href="functions.html#operator_regexp"><code class="literal">REGEXP</code></a> and
+          <a class="link" href="functions.html#operator_regexp"><code class="literal">RLIKE</code></a>
+          operators work in byte-wise fashion, so they are not multibyte
+          safe and may produce unexpected results with multibyte
+          character sets. In addition, these operators compare
+          characters by their byte values and accented characters may
+          not compare as equal even if a given collation treats them as
+          equal.
+</p></li></ul>
+</div>
+
+</div>
+<div class="section">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="performance-schema-restrictions"></a>C.8 Restrictions on Performance Schema</h2>
+
+</div>
+
+</div>
+
+</div>
+<a class="indexterm" name="idm140091496234736"></a><a class="indexterm" name="idm140091496233232"></a><a class="indexterm" name="idm140091496231728"></a><a class="indexterm" name="idm140091496230224"></a><p>
+      The Performance Schema avoids using mutexes to collect or produce
+      data, so there are no guarantees of consistency and results can
+      sometimes be incorrect. Event values in
+      <code class="literal">performance_schema</code> tables are nondeterministic
+      and nonrepeatable.
+    </p><p>
+      If you save event information in another table, you should not
+      assume that the original events will still be available later. For
+      example, if you select events from a
+      <code class="literal">performance_schema</code> table into a temporary
+      table, intending to join that table with the original table later,
+      there might be no matches.
+    </p><p>
+      <a class="link" href="programs.html#mysqldump" title="4.5.4 mysqldump — A Database Backup Program"><span class="command"><strong>mysqldump</strong></span></a> and <code class="literal">BACKUP
+      DATABASE</code> ignore tables in the
+      <code class="literal">performance_schema</code> database.
+    </p><p>
+      Tables in the <code class="literal">performance_schema</code> database
+      cannot be locked with <code class="literal">LOCK TABLES</code>, except the
+      <code class="literal">setup_<em class="replaceable"><code>xxx</code></em></code> tables.
+    </p><p>
+      Tables in the <code class="literal">performance_schema</code> database
+      cannot be indexed.
+    </p><p>
+      Tables in the <code class="literal">performance_schema</code> database are
+      not replicated.
+    </p><p>
+      The types of timers might vary per platform. The
+      <a class="link" href="performance-schema.html#performance-timers-table" title="26.12.17.4 The performance_timers Table"><code class="literal">performance_timers</code></a> table shows which
+      event timers are available. If the values in this table for a
+      given timer name are <code class="literal">NULL</code>, that timer is not
+      supported on your platform.
+    </p><p>
+      Instruments that apply to storage engines might not be implemented
+      for all storage engines. Instrumentation of each third-party
+      engine is the responsibility of the engine maintainer.
+</p>
+</div>
+<div class="section">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="pluggable-authentication-restrictions"></a>C.9 Restrictions on Pluggable Authentication</h2>
+
+</div>
+
+</div>
+
+</div>
+<a class="indexterm" name="idm140091496213216"></a><a class="indexterm" name="idm140091496211760"></a><p>
+      The first part of this section describes general restrictions on
+      the applicability of the pluggable authentication framework
+      described at <a class="xref" href="security.html#pluggable-authentication" title="6.2.17 Pluggable Authentication">Section 6.2.17, “Pluggable Authentication”</a>. The
+      second part describes how third-party connector developers can
+      determine the extent to which a connector can take advantage of
+      pluggable authentication capabilities and what steps to take to
+      become more compliant.
+    </p><p>
+      The term <span class="quote">“<span class="quote">native authentication</span>”</span> used here refers to
+      authentication against passwords stored in the
+      <code class="literal">mysql.user</code> system table. This is the same
+      authentication method provided by older MySQL servers, before
+      pluggable authentication was implemented. <span class="quote">“<span class="quote">Windows native
+      authentication</span>”</span> refers to authentication using the
+      credentials of a user who has already logged in to Windows, as
+      implemented by the Windows Native Authentication plugin
+      (<span class="quote">“<span class="quote">Windows plugin</span>”</span> for short).
+</p>
+<h3><a name="idm140091496205904"></a>General Pluggable Authentication Restrictions</h3>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          <span class="bold"><strong>Connector/C, Connector/C++:</strong></span>
+          Clients that use these connectors can connect to the server
+          only through accounts that use native authentication.
+        </p><p>
+          Exception: A connector supports pluggable authentication if it
+          was built to link to <code class="literal">libmysqlclient</code>
+          dynamically (rather than statically) and it loads the current
+          version of <code class="literal">libmysqlclient</code> if that version
+          is installed, or if the connector is recompiled from source to
+          link against the current <code class="literal">libmysqlclient</code>.
+        </p><p>
+          For information about writing connectors to handle informatin
+          from the server about the default server-side authentication
+          plugin, see
+          <a class="xref" href="security.html#pluggable-authentication-connector-writing" title="Authentication Plugin Connector-Writing Considerations">Authentication Plugin Connector-Writing Considerations</a>.
+        </p></li><li class="listitem"><p>
+          <span class="bold"><strong>Connector/NET:</strong></span> Clients that use
+          Connector/NET can connect to the server through accounts that use
+          native authentication or Windows native authentication.
+        </p></li><li class="listitem"><p>
+          <span class="bold"><strong>Connector/PHP:</strong></span> Clients that
+          use this connector can connect to the server only through
+          accounts that use native authentication, when compiled using
+          the MySQL native driver for PHP (<code class="literal">mysqlnd</code>).
+        </p></li><li class="listitem"><p>
+          <span class="bold"><strong>Windows native
+          authentication:</strong></span> Connecting through an account that
+          uses the Windows plugin requires Windows Domain setup. Without
+          it, NTLM authentication is used and then only local
+          connections are possible; that is, the client and server must
+          run on the same computer.
+        </p></li><li class="listitem"><p>
+          <span class="bold"><strong>Proxy users:</strong></span> Proxy user
+          support is available to the extent that clients can connect
+          through accounts authenticated with plugins that implement
+          proxy user capability (that is, plugins that can return a user
+          name different from that of the connecting user). For example,
+          the PAM and Windows plugins support proxy users. The
+          <code class="literal">mysql_native_password</code> and
+          <code class="literal">sha256_password</code> authentication plugins do
+          not support proxy users by default, but can be configured to
+          do so; see <a class="xref" href="security.html#proxy-users-server-user-mapping" title="Server Support for Proxy User Mapping">Server Support for Proxy User Mapping</a>.
+        </p></li><li class="listitem"><p>
+          <span class="bold"><strong>Replication</strong></span>: Replication
+          slaves can employ not only master accounts using native
+          authentication, but can also connect through master accounts
+          that use nonnative authentication if the required client-side
+          plugin is available. If the plugin is built into
+          <code class="literal">libmysqlclient</code>, it is available by default.
+          Otherwise, the plugin must be installed on the slave side in
+          the directory named by the slave
+          <a class="link" href="server-administration.html#sysvar_plugin_dir"><code class="literal">plugin_dir</code></a> system variable.
+        </p></li><li class="listitem"><p>
+          <span class="bold"><strong><a class="link" href="storage-engines.html#federated-storage-engine" title="16.8 The FEDERATED Storage Engine"><code class="literal">FEDERATED</code></a>
+          tables:</strong></span> A <a class="link" href="storage-engines.html#federated-storage-engine" title="16.8 The FEDERATED Storage Engine"><code class="literal">FEDERATED</code></a>
+          table can access the remote table only through accounts on the
+          remote server that use native authentication.
+</p></li></ul>
+</div>
+<h3><a name="idm140091496181136"></a>Pluggable Authentication and Third-Party Connectors</h3>
+<p>
+      Third-party connector developers can use the following guidelines
+      to determine readiness of a connector to take advantage of
+      pluggable authentication capabilities and what steps to take to
+      become more compliant:
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          An existing connector to which no changes have been made uses
+          native authentication and clients that use the connector can
+          connect to the server only through accounts that use native
+          authentication. <span class="emphasis"><em>However, you should test the
+          connector against a recent version of the server to verify
+          that such connections still work without problem.</em></span>
+        </p><p>
+          Exception: A connector might work with pluggable
+          authentication without any changes if it links to
+          <code class="literal">libmysqlclient</code> dynamically (rather than
+          statically) and it loads the current version of
+          <code class="literal">libmysqlclient</code> if that version is
+          installed.
+        </p></li><li class="listitem"><p>
+          To take advantage of pluggable authentication capabilities, a
+          connector that is <code class="literal">libmysqlclient</code>-based
+          should be relinked against the current version of
+          <code class="literal">libmysqlclient</code>. This enables the connector
+          to support connections though accounts that require
+          client-side plugins now built into
+          <code class="literal">libmysqlclient</code> (such as the cleartext
+          plugin needed for PAM authentication and the Windows plugin
+          needed for Windows native authentication). Linking with a
+          current <code class="literal">libmysqlclient</code> also enables the
+          connector to access client-side plugins installed in the
+          default MySQL plugin directory (typically the directory named
+          by the default value of the local server's
+          <a class="link" href="server-administration.html#sysvar_plugin_dir"><code class="literal">plugin_dir</code></a> system variable).
+        </p><p>
+          If a connector links to <code class="literal">libmysqlclient</code>
+          dynamically, it must be ensured that the newer version of
+          <code class="literal">libmysqlclient</code> is installed on the client
+          host and that the connector loads it at runtime.
+        </p></li><li class="listitem"><p>
+          Another way for a connector to support a given authentication
+          method is to implement it directly in the client/server
+          protocol. Connector/NET uses this approach to provide support for
+          Windows native authentication.
+        </p></li><li class="listitem"><p>
+          If a connector should be able to load client-side plugins from
+          a directory different from the default plugin directory, it
+          must implement some means for client users to specify the
+          directory. Possibilities for this include a command-line
+          option or environment variable from which the connector can
+          obtain the directory name. Standard MySQL client programs such
+          as <a class="link" href="programs.html#mysql" title="4.5.1 mysql — The MySQL Command-Line Client"><span class="command"><strong>mysql</strong></span></a> and <a class="link" href="programs.html#mysqladmin" title="4.5.2 mysqladmin — Client for Administering a MySQL Server"><span class="command"><strong>mysqladmin</strong></span></a>
+          implement a <code class="option">--plugin-dir</code> option. See also
+          <a class="xref" href="connectors-apis.html#c-api-plugin-functions" title="28.7.17 C API Client Plugin Functions">Section 28.7.17, “C API Client Plugin Functions”</a>.
+        </p></li><li class="listitem"><p>
+          Proxy user support by a connector depends, as described
+          earlier in this section, on whether the authentication methods
+          that it supports permit proxy users.
+</p></li></ul>
+</div>
+
+</div>
+<div class="section">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="limits"></a>C.10 Limits in MySQL</h2>
+
+</div>
+
+</div>
+
+</div>
+<div class="toc">
+<dl class="toc"><dt><span class="section"><a href="restrictions.html#joins-limits">C.10.1 Limits on Joins</a></span></dt><dt><span class="section"><a href="restrictions.html#database-count-limit">C.10.2 Limits on Number of Databases and Tables</a></span></dt><dt><span class="section"><a href="restrictions.html#table-size-limit">C.10.3 Limits on Table Size</a></span></dt><dt><span class="section"><a href="restrictions.html#column-count-limit">C.10.4 Limits on Table Column Count and Row Size</a></span></dt><dt><span class="section"><a href="restrictions.html#limits-windows">C.10.5 Windows Platform Limitations</a></span></dt></dl>
+</div>
+<a class="indexterm" name="idm140091496160096"></a><a class="indexterm" name="idm140091496158608"></a><p>
+      This section lists current limits in MySQL 8.0.
+</p>
+<div class="section">
+
+<div class="titlepage">
+<div>
+<div>
+<h3 class="title"><a name="joins-limits"></a>C.10.1 Limits on Joins</h3>
+</div>
+</div>
+</div>
+<a class="indexterm" name="idm140091496155552"></a><p>
+        The maximum number of tables that can be referenced in a single
+        join is 61. This includes a join handled by merging derived
+        tables and views in the <code class="literal">FROM</code> clause into the
+        outer query block (see
+        <a class="xref" href="optimization.html#derived-table-optimization" title="8.2.2.4 Optimizing Derived Tables, View References, and Common Table Expressions with Merging or Materialization">Section 8.2.2.4, “Optimizing Derived Tables, View References, and Common Table Expressions
+          with Merging or Materialization”</a>). It also applies
+        to the number of tables that can be referenced in the definition
+        of a view.
+</p>
+</div>
+<div class="section">
+<div class="titlepage">
+<div>
+<div>
+<h3 class="title"><a name="database-count-limit"></a>C.10.2 Limits on Number of Databases and Tables</h3>
+
+</div>
+
+</div>
+
+</div>
+<a class="indexterm" name="idm140091496150640"></a><a class="indexterm" name="idm140091496149168"></a><p>
+        MySQL has no limit on the number of databases. The underlying
+        file system may have a limit on the number of directories.
+      </p><p>
+        MySQL has no limit on the number of tables. The underlying file
+        system may have a limit on the number of files that represent
+        tables. Individual storage engines may impose engine-specific
+        constraints. <code class="literal">InnoDB</code> permits up to 4 billion
+        tables.
+</p>
+</div>
+<div class="section">
+<div class="titlepage">
+<div>
+<div>
+<h3 class="title"><a name="table-size-limit"></a>C.10.3 Limits on Table Size</h3>
+
+</div>
+
+</div>
+
+</div>
+<a class="indexterm" name="idm140091496144496"></a><a class="indexterm" name="idm140091496143008"></a><a class="indexterm" name="idm140091496141520"></a><a class="indexterm" name="idm140091496140448"></a><a class="indexterm" name="idm140091496138960"></a><a class="indexterm" name="idm140091496137472"></a><p>
+        The effective maximum table size for MySQL databases is usually
+        determined by operating system constraints on file sizes, not by
+        MySQL internal limits. For up-to-date information operating
+        system file size limits, refer to the documentation specific to
+        your operating system.
+      </p><p>
+        Windows users, please note that FAT and VFAT (FAT32) are
+        <span class="emphasis"><em>not</em></span> considered suitable for production use
+        with MySQL. Use NTFS instead.
+      </p><p>
+        If you encounter a full-table error, there are several reasons
+        why it might have occurred:
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+            The disk might be full.
+          </p></li><li class="listitem"><p>
+            You are using <code class="literal">InnoDB</code> tables and have run
+            out of room in an <code class="literal">InnoDB</code> tablespace file.
+            The maximum tablespace size is also the maximum size for a
+            table. For tablespace size limits, see
+            <a class="xref" href="innodb-storage-engine.html#innodb-restrictions" title="15.6.1.6 Limits on InnoDB Tables">Section 15.6.1.6, “Limits on InnoDB Tables”</a>.
+          </p><p>
+            Generally, partitioning of tables into multiple tablespace
+            files is recommended for tables larger than 1TB in size.
+          </p></li><li class="listitem"><p>
+            You have hit an operating system file size limit. For
+            example, you are using <code class="literal">MyISAM</code> tables on
+            an operating system that supports files only up to 2GB in
+            size and you have hit this limit for the data file or index
+            file.
+          </p></li><li class="listitem"><p>
+            You are using a <code class="literal">MyISAM</code> table and the
+            space required for the table exceeds what is permitted by
+            the internal pointer size. <code class="literal">MyISAM</code> permits
+            data and index files to grow up to 256TB by default, but
+            this limit can be changed up to the maximum permissible size
+            of 65,536TB (256<sup>7</sup> − 1
+            bytes).
+          </p><p>
+            If you need a <code class="literal">MyISAM</code> table that is larger
+            than the default limit and your operating system supports
+            large files, the <a class="link" href="sql-syntax.html#create-table" title="13.1.20 CREATE TABLE Syntax"><code class="literal">CREATE TABLE</code></a>
+            statement supports <code class="literal">AVG_ROW_LENGTH</code> and
+            <code class="literal">MAX_ROWS</code> options. See
+            <a class="xref" href="sql-syntax.html#create-table" title="13.1.20 CREATE TABLE Syntax">Section 13.1.20, “CREATE TABLE Syntax”</a>. The server uses these
+            options to determine how large a table to permit.
+          </p><p>
+            If the pointer size is too small for an existing table, you
+            can change the options with <a class="link" href="sql-syntax.html#alter-table" title="13.1.9 ALTER TABLE Syntax"><code class="literal">ALTER
+            TABLE</code></a> to increase a table's maximum permissible
+            size. See <a class="xref" href="sql-syntax.html#alter-table" title="13.1.9 ALTER TABLE Syntax">Section 13.1.9, “ALTER TABLE Syntax”</a>.
+          </p><pre data-lang="sql" class="programlisting">
+ALTER TABLE <em class="replaceable"><code>tbl_name</code></em> MAX_ROWS=1000000000 AVG_ROW_LENGTH=<em class="replaceable"><code>nnn</code></em>;
+</pre><p>
+            You have to specify <code class="literal">AVG_ROW_LENGTH</code> only
+            for tables with <a class="link" href="data-types.html#blob" title="11.4.3 The BLOB and TEXT Types"><code class="literal">BLOB</code></a> or
+            <a class="link" href="data-types.html#blob" title="11.4.3 The BLOB and TEXT Types"><code class="literal">TEXT</code></a> columns; in this case,
+            MySQL can't optimize the space required based only on the
+            number of rows.
+          </p><p>
+            To change the default size limit for
+            <code class="literal">MyISAM</code> tables, set the
+            <a class="link" href="server-administration.html#sysvar_myisam_data_pointer_size"><code class="literal">myisam_data_pointer_size</code></a>,
+            which sets the number of bytes used for internal row
+            pointers. The value is used to set the pointer size for new
+            tables if you do not specify the <code class="literal">MAX_ROWS</code>
+            option. The value of
+            <a class="link" href="server-administration.html#sysvar_myisam_data_pointer_size"><code class="literal">myisam_data_pointer_size</code></a>
+            can be from 2 to 7. A value of 4 permits tables up to 4GB; a
+            value of 6 permits tables up to 256TB.
+          </p><p>
+            You can check the maximum data and index sizes by using this
+            statement:
+          </p><pre data-lang="sql" class="programlisting">
+SHOW TABLE STATUS FROM <em class="replaceable"><code>db_name</code></em> LIKE '<em class="replaceable"><code>tbl_name</code></em>';
+</pre><p>
+            You also can use <a class="link" href="programs.html#myisamchk" title="4.6.4 myisamchk — MyISAM Table-Maintenance Utility"><span class="command"><strong>myisamchk -dv
+            /path/to/table-index-file</strong></span></a>. See
+            <a class="xref" href="sql-syntax.html#show" title="13.7.6 SHOW Syntax">Section 13.7.6, “SHOW Syntax”</a>, or <a class="xref" href="programs.html#myisamchk" title="4.6.4 myisamchk — MyISAM Table-Maintenance Utility">Section 4.6.4, “<span class="command"><strong>myisamchk</strong></span> — MyISAM Table-Maintenance Utility”</a>.
+          </p><p>
+            Other ways to work around file-size limits for
+            <code class="literal">MyISAM</code> tables are as follows:
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p>
+                If your large table is read only, you can use
+                <a class="link" href="programs.html#myisampack" title="4.6.6 myisampack — Generate Compressed, Read-Only MyISAM Tables"><span class="command"><strong>myisampack</strong></span></a> to compress it.
+                <a class="link" href="programs.html#myisampack" title="4.6.6 myisampack — Generate Compressed, Read-Only MyISAM Tables"><span class="command"><strong>myisampack</strong></span></a> usually compresses a table
+                by at least 50%, so you can have, in effect, much bigger
+                tables. <a class="link" href="programs.html#myisampack" title="4.6.6 myisampack — Generate Compressed, Read-Only MyISAM Tables"><span class="command"><strong>myisampack</strong></span></a> also can merge
+                multiple tables into a single table. See
+                <a class="xref" href="programs.html#myisampack" title="4.6.6 myisampack — Generate Compressed, Read-Only MyISAM Tables">Section 4.6.6, “<span class="command"><strong>myisampack</strong></span> — Generate Compressed, Read-Only MyISAM Tables”</a>.
+              </p></li><li class="listitem"><p>
+                MySQL includes a <code class="literal">MERGE</code> library that
+                enables you to handle a collection of
+                <code class="literal">MyISAM</code> tables that have identical
+                structure as a single <code class="literal">MERGE</code> table.
+                See <a class="xref" href="storage-engines.html#merge-storage-engine" title="16.7 The MERGE Storage Engine">Section 16.7, “The MERGE Storage Engine”</a>.
+</p></li></ul>
+</div>
+</li><li class="listitem"><p>
+            You are using the <code class="literal">MEMORY</code>
+            (<code class="literal">HEAP</code>) storage engine; in this case you
+            need to increase the value of the
+            <a class="link" href="server-administration.html#sysvar_max_heap_table_size"><code class="literal">max_heap_table_size</code></a> system
+            variable. See <a class="xref" href="server-administration.html#server-system-variables" title="5.1.8 Server System Variables">Section 5.1.8, “Server System Variables”</a>.
+</p></li></ul>
+</div>
+
+</div>
+
+<div class="section">
+
+<div class="titlepage">
+<div>
+<div>
+<h3 class="title"><a name="column-count-limit"></a>C.10.4 Limits on Table Column Count and Row Size</h3>
+
+</div>
+
+</div>
+
+</div>
+<a class="indexterm" name="idm140091496084960"></a><a class="indexterm" name="idm140091496083488"></a><a class="indexterm" name="idm140091496082000"></a><a class="indexterm" name="idm140091496080512"></a>
+<div class="simplesect">
+
+<div class="titlepage">
+<div>
+
+<div class="simple">
+<h4 class="title"><a name="column-count-limits"></a>Column Count Limits</h4>
+
+</div>
+
+</div>
+
+</div>
+<p>
+          MySQL has hard limit of 4096 columns per table, but the
+          effective maximum may be less for a given table. The exact
+          column limit depends on several factors:
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+              The maximum row size for a table constrains the number
+              (and possibly size) of columns because the total length of
+              all columns cannot exceed this size. See
+              <a class="xref" href="restrictions.html#row-size-limits" title="Row Size Limits">Row Size Limits</a>.
+            </p></li><li class="listitem"><p>
+              The storage requirements of individual columns constrain
+              the number of columns that fit within a given maximum row
+              size. Storage requirements for some data types depend on
+              factors such as storage engine, storage format, and
+              character set. See <a class="xref" href="data-types.html#storage-requirements" title="11.8 Data Type Storage Requirements">Section 11.8, “Data Type Storage Requirements”</a>.
+            </p></li><li class="listitem"><p>
+              Storage engines may impose additional restrictions that
+              limit table column count. For example,
+              <a class="link" href="innodb-storage-engine.html" title="Chapter 15 The InnoDB Storage Engine"><code class="literal">InnoDB</code></a> has a limit of 1017
+              columns per table. See
+              <a class="xref" href="innodb-storage-engine.html#innodb-restrictions" title="15.6.1.6 Limits on InnoDB Tables">Section 15.6.1.6, “Limits on InnoDB Tables”</a>. For information
+              about other storage engines, see
+              <a class="xref" href="storage-engines.html" title="Chapter 16 Alternative Storage Engines">Chapter 16, <i>Alternative Storage Engines</i></a>.
+            </p></li><li class="listitem"><p>
+              Functional key parts (see <a class="xref" href="sql-syntax.html#create-index" title="13.1.15 CREATE INDEX Syntax">Section 13.1.15, “CREATE INDEX Syntax”</a>)
+              are implemented as hidden virtual generated stored
+              columns, so each functional key part in a table index
+              counts against the table total column limit.
+</p></li></ul>
+</div>
+
+</div>
+<div class="simplesect">
+<div class="titlepage">
+<div>
+<div class="simple">
+<h4 class="title"><a name="row-size-limits"></a>Row Size Limits</h4>
+
+</div>
+
+</div>
+
+</div>
+<p>
+          The maximum row size for a given table is determined by
+          several factors:
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+              The internal representation of a MySQL table has a maximum
+              row size limit of 65,535 bytes, even if the storage engine
+              is capable of supporting larger rows.
+              <a class="link" href="data-types.html#blob" title="11.4.3 The BLOB and TEXT Types"><code class="literal">BLOB</code></a> and
+              <a class="link" href="data-types.html#blob" title="11.4.3 The BLOB and TEXT Types"><code class="literal">TEXT</code></a> columns only
+              contribute 9 to 12 bytes toward the row size limit because
+              their contents are stored separately from the rest of the
+              row.
+            </p></li><li class="listitem"><p>
+              The maximum row size for an <code class="literal">InnoDB</code>
+              table, which applies to data stored locally within a
+              database page, is slightly less than half a page for 4KB,
+              8KB, 16KB, and 32KB
+              <a class="link" href="innodb-storage-engine.html#sysvar_innodb_page_size"><code class="literal">innodb_page_size</code></a>
+              settings. For example, the maximum row size is slightly
+              less than 8KB for the default 16KB
+              <code class="literal">InnoDB</code> page size. For 64KB pages, the
+              maximum row size is slightly less than 16KB. See
+              <a class="xref" href="innodb-storage-engine.html#innodb-restrictions" title="15.6.1.6 Limits on InnoDB Tables">Section 15.6.1.6, “Limits on InnoDB Tables”</a>.
+            </p><p>
+              If a row containing
+              <a class="link" href="glossary.html#glos_variable_length_type" title="variable-length type">variable-length
+              columns</a> exceeds the <code class="literal">InnoDB</code>
+              maximum row size, <code class="literal">InnoDB</code> selects
+              variable-length columns for external off-page storage
+              until the row fits within the <code class="literal">InnoDB</code>
+              row size limit. The amount of data stored locally for
+              variable-length columns that are stored off-page differs
+              by row format. For more information, see
+              <a class="xref" href="innodb-storage-engine.html#innodb-row-format" title="15.10 InnoDB Row Formats">Section 15.10, “InnoDB Row Formats”</a>.
+            </p></li><li class="listitem"><p>
+              Different storage formats use different amounts of page
+              header and trailer data, which affects the amount of
+              storage available for rows.
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p>
+                  For information about <code class="literal">InnoDB</code> row
+                  formats, see <a class="xref" href="innodb-storage-engine.html#innodb-row-format" title="15.10 InnoDB Row Formats">Section 15.10, “InnoDB Row Formats”</a>.
+                </p></li><li class="listitem"><p>
+                  For information about <code class="literal">MyISAM</code>
+                  storage formats, see
+                  <a class="xref" href="storage-engines.html#myisam-table-formats" title="16.2.3 MyISAM Table Storage Formats">Section 16.2.3, “MyISAM Table Storage Formats”</a>.
+</p></li></ul>
+</div>
+</li></ul>
+</div>
+<h5><a name="idm140091496047360"></a>Row Size Limit Examples</h5>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+              The MySQL maximum row size limit of 65,535 bytes is
+              demonstrated in the following <code class="literal">InnoDB</code>
+              and <code class="literal">MyISAM</code> examples. The limit is
+              enforced regardless of storage engine, even though the
+              storage engine may be capable of supporting larger rows.
+            </p><pre data-lang="sql" class="programlisting">
+mysql&gt; <strong class="userinput"><code>CREATE TABLE t (a VARCHAR(10000), b VARCHAR(10000),</code></strong>
+       <strong class="userinput"><code>c VARCHAR(10000), d VARCHAR(10000), e VARCHAR(10000),</code></strong>
+       <strong class="userinput"><code>f VARCHAR(10000), g VARCHAR(6000)) ENGINE=InnoDB CHARACTER SET latin1;</code></strong>
+ERROR 1118 (42000): Row size too large. The maximum row size for the used 
+table type, not counting BLOBs, is 65535. This includes storage overhead, 
+check the manual. You have to change some columns to TEXT or BLOBs 
+</pre><pre data-lang="sql" class="programlisting">
+mysql&gt; <strong class="userinput"><code>CREATE TABLE t (a VARCHAR(10000), b VARCHAR(10000),</code></strong>
+       <strong class="userinput"><code>c VARCHAR(10000), d VARCHAR(10000), e VARCHAR(10000),</code></strong>
+       <strong class="userinput"><code>f VARCHAR(10000), g VARCHAR(6000)) ENGINE=MyISAM CHARACTER SET latin1;</code></strong>
+ERROR 1118 (42000): Row size too large. The maximum row size for the used 
+table type, not counting BLOBs, is 65535. This includes storage overhead, 
+check the manual. You have to change some columns to TEXT or BLOBs 
+</pre><p>
+              In the following <code class="literal">MyISAM</code> example,
+              changing a column to <a class="link" href="data-types.html#blob" title="11.4.3 The BLOB and TEXT Types"><code class="literal">TEXT</code></a>
+              avoids the 65,535-byte row size limit and permits the
+              operation to succeed because
+              <a class="link" href="data-types.html#blob" title="11.4.3 The BLOB and TEXT Types"><code class="literal">BLOB</code></a> and
+              <a class="link" href="data-types.html#blob" title="11.4.3 The BLOB and TEXT Types"><code class="literal">TEXT</code></a> columns only
+              contribute 9 to 12 bytes toward the row size.
+            </p><pre data-lang="sql" class="programlisting">
+mysql&gt; <strong class="userinput"><code>CREATE TABLE t (a VARCHAR(10000), b VARCHAR(10000),</code></strong>
+       <strong class="userinput"><code>c VARCHAR(10000), d VARCHAR(10000), e VARCHAR(10000),</code></strong>
+       <strong class="userinput"><code>f VARCHAR(10000), g TEXT(6000)) ENGINE=MyISAM CHARACTER SET latin1;</code></strong>
+Query OK, 0 rows affected (0.02 sec)
+</pre><p>
+              The operation succeeds for an <code class="literal">InnoDB</code>
+              table because changing a column to
+              <a class="link" href="data-types.html#blob" title="11.4.3 The BLOB and TEXT Types"><code class="literal">TEXT</code></a> avoids the MySQL
+              65,535-byte row size limit, and <code class="literal">InnoDB</code>
+              off-page storage of variable-length columns avoids the
+              <code class="literal">InnoDB</code> row size limit.
+            </p><pre data-lang="sql" class="programlisting">
+mysql&gt; <strong class="userinput"><code>CREATE TABLE t (a VARCHAR(10000), b VARCHAR(10000),</code></strong>
+       <strong class="userinput"><code>c VARCHAR(10000), d VARCHAR(10000), e VARCHAR(10000),</code></strong>
+       <strong class="userinput"><code>f VARCHAR(10000), g TEXT(6000)) ENGINE=InnoDB CHARACTER SET latin1;</code></strong>
+Query OK, 0 rows affected (0.02 sec)
+</pre></li><li class="listitem"><p>
+              Storage for variable-length columns includes length bytes,
+              which are counted toward the row size. For example, a
+              <a class="link" href="data-types.html#char" title="11.4.1 The CHAR and VARCHAR Types"><code class="literal">VARCHAR(255)
+              CHARACTER SET utf8mb3</code></a> column takes two bytes to
+              store the length of the value, so each value can take up
+              to 767 bytes.
+            </p><p>
+              The statement to create table <code class="literal">t1</code>
+              succeeds because the columns require 32,765 + 2 bytes and
+              32,766 + 2 bytes, which falls within the maximum row size
+              of 65,535 bytes:
+            </p><pre data-lang="sql" class="programlisting">
+mysql&gt; <strong class="userinput"><code>CREATE TABLE t1</code></strong>
+       <strong class="userinput"><code>(c1 VARCHAR(32765) NOT NULL, c2 VARCHAR(32766) NOT NULL)</code></strong>
+       <strong class="userinput"><code>ENGINE = InnoDB CHARACTER SET latin1;</code></strong>
+Query OK, 0 rows affected (0.02 sec)
+</pre><p>
+              The statement to create table <code class="literal">t2</code> fails
+              because, although the column length is within the maximum
+              length of 65,535 bytes, two additional bytes are required
+              to record the length, which causes the row size to exceed
+              65,535 bytes:
+            </p><pre data-lang="sql" class="programlisting">
+mysql&gt; <strong class="userinput"><code>CREATE TABLE t2</code></strong>
+       <strong class="userinput"><code>(c1 VARCHAR(65535) NOT NULL)</code></strong>
+       <strong class="userinput"><code>ENGINE = InnoDB CHARACTER SET latin1;</code></strong>
+ERROR 1118 (42000): Row size too large. The maximum row size for the used 
+table type, not counting BLOBs, is 65535. This includes storage overhead, 
+check the manual. You have to change some columns to TEXT or BLOBs
+</pre><p>
+              Reducing the column length to 65,533 or less permits the
+              statement to succeed.
+            </p><pre data-lang="sql" class="programlisting">
+mysql&gt; <strong class="userinput"><code>CREATE TABLE t2</code></strong>
+       <strong class="userinput"><code>(c1 VARCHAR(65533) NOT NULL)</code></strong>
+       <strong class="userinput"><code>ENGINE = InnoDB CHARACTER SET latin1;</code></strong>
+Query OK, 0 rows affected (0.01 sec)
+</pre></li><li class="listitem"><p>
+              For <a class="link" href="storage-engines.html#myisam-storage-engine" title="16.2 The MyISAM Storage Engine"><code class="literal">MyISAM</code></a> tables,
+              <code class="literal">NULL</code> columns require additional space
+              in the row to record whether their values are
+              <code class="literal">NULL</code>. Each <code class="literal">NULL</code>
+              column takes one bit extra, rounded up to the nearest
+              byte.
+            </p><p>
+              The statement to create table <code class="literal">t3</code> fails
+              because <a class="link" href="storage-engines.html#myisam-storage-engine" title="16.2 The MyISAM Storage Engine"><code class="literal">MyISAM</code></a> requires space
+              for <code class="literal">NULL</code> columns in addition to the
+              space required for variable-length column length bytes,
+              causing the row size to exceed 65,535 bytes:
+            </p><pre data-lang="sql" class="programlisting">
+mysql&gt; <strong class="userinput"><code>CREATE TABLE t3</code></strong>
+       <strong class="userinput"><code>(c1 VARCHAR(32765) NULL, c2 VARCHAR(32766) NULL)</code></strong>
+       <strong class="userinput"><code>ENGINE = MyISAM CHARACTER SET latin1;</code></strong>
+ERROR 1118 (42000): Row size too large. The maximum row size for the used 
+table type, not counting BLOBs, is 65535. This includes storage overhead, 
+check the manual. You have to change some columns to TEXT or BLOBs 
+</pre><p>
+              For information about <a class="link" href="innodb-storage-engine.html" title="Chapter 15 The InnoDB Storage Engine"><code class="literal">InnoDB</code></a>
+              <code class="literal">NULL</code> column storage, see
+              <a class="xref" href="innodb-storage-engine.html#innodb-row-format" title="15.10 InnoDB Row Formats">Section 15.10, “InnoDB Row Formats”</a>.
+            </p></li><li class="listitem"><p>
+              <code class="literal">InnoDB</code> restricts row size (for data
+              stored locally within the database page) to slightly less
+              than half a database page for 4KB, 8KB, 16KB, and 32KB
+              <a class="link" href="innodb-storage-engine.html#sysvar_innodb_page_size"><code class="literal">innodb_page_size</code></a>
+              settings, and to slightly less than 16KB for 64KB pages.
+            </p><p>
+              The statement to create table <code class="literal">t4</code> fails
+              because the defined columns exceed the row size limit for
+              a 16KB <code class="literal">InnoDB</code> page.
+            </p><pre data-lang="sql" class="programlisting">
+mysql&gt; <strong class="userinput"><code>CREATE TABLE t4 (</code></strong>
+       <strong class="userinput"><code>c1 CHAR(255),c2 CHAR(255),c3 CHAR(255),</code></strong>
+       <strong class="userinput"><code>c4 CHAR(255),c5 CHAR(255),c6 CHAR(255),</code></strong>
+       <strong class="userinput"><code>c7 CHAR(255),c8 CHAR(255),c9 CHAR(255),</code></strong>
+       <strong class="userinput"><code>c10 CHAR(255),c11 CHAR(255),c12 CHAR(255),</code></strong>
+       <strong class="userinput"><code>c13 CHAR(255),c14 CHAR(255),c15 CHAR(255),</code></strong>
+       <strong class="userinput"><code>c16 CHAR(255),c17 CHAR(255),c18 CHAR(255),</code></strong>
+       <strong class="userinput"><code>c19 CHAR(255),c20 CHAR(255),c21 CHAR(255),</code></strong>
+       <strong class="userinput"><code>c22 CHAR(255),c23 CHAR(255),c24 CHAR(255),</code></strong>
+       <strong class="userinput"><code>c25 CHAR(255),c26 CHAR(255),c27 CHAR(255),</code></strong>
+       <strong class="userinput"><code>c28 CHAR(255),c29 CHAR(255),c30 CHAR(255),</code></strong>
+       <strong class="userinput"><code>c31 CHAR(255),c32 CHAR(255),c33 CHAR(255)</code></strong>
+       <strong class="userinput"><code>) ENGINE=InnoDB ROW_FORMAT=DYNAMIC DEFAULT CHARSET latin1;</code></strong>
+ERROR 1118 (42000): Row size too large (&gt; 8126). Changing some columns to TEXT or BLOB may help.
+In current row format, BLOB prefix of 0 bytes is stored inline.
+</pre></li></ul>
+</div>
+
+</div>
+
+</div>
+<div class="section">
+<div class="titlepage">
+<div>
+<div>
+<h3 class="title"><a name="limits-windows"></a>C.10.5 Windows Platform Limitations</h3>
+
+</div>
+
+</div>
+
+</div>
+<a class="indexterm" name="idm140091495975808"></a><p>
+        The following limitations apply to use of MySQL on the Windows
+        platform:
+</p>
+<div class="itemizedlist">
+<ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+            <span class="bold"><strong>Process memory</strong></span>
+          </p><p>
+            On Windows 32-bit platforms, it is not possible by default
+            to use more than 2GB of RAM within a single process,
+            including MySQL. This is because the physical address limit
+            on Windows 32-bit is 4GB and the default setting within
+            Windows is to split the virtual address space between kernel
+            (2GB) and user/applications (2GB).
+          </p><p>
+            Some versions of Windows have a boot time setting to enable
+            larger applications by reducing the kernel application.
+            Alternatively, to use more than 2GB, use a 64-bit version of
+            Windows.
+          </p></li><li class="listitem"><p>
+            <span class="bold"><strong>File system aliases</strong></span>
+          </p><p>
+            When using <code class="literal">MyISAM</code> tables, you cannot use
+            aliases within Windows link to the data files on another
+            volume and then link back to the main MySQL
+            <a class="link" href="server-administration.html#option_mysqld_datadir"><code class="option">datadir</code></a> location.
+          </p><p>
+            This facility is often used to move the data and index files
+            to a RAID or other fast solution.
+          </p></li><li class="listitem"><p>
+            <span class="bold"><strong>Limited number of ports</strong></span>
+          </p><p>
+            Windows systems have about 4,000 ports available for client
+            connections, and after a connection on a port closes, it
+            takes two to four minutes before the port can be reused. In
+            situations where clients connect to and disconnect from the
+            server at a high rate, it is possible for all available
+            ports to be used up before closed ports become available
+            again. If this happens, the MySQL server appears to be
+            unresponsive even though it is running. Ports may be used by
+            other applications running on the machine as well, in which
+            case the number of ports available to MySQL is lower.
+          </p><p>
+            For more information about this problem, see
+            <a class="ulink" href="http://support.microsoft.com/default.aspx?scid=kb;en-us;196271" target="_top">http://support.microsoft.com/default.aspx?scid=kb;en-us;196271</a>.
+          </p></li><li class="listitem"><p>
+            <span class="bold"><strong><code class="literal">DATA DIRECTORY</code> and
+            <code class="literal">INDEX DIRECTORY</code></strong></span>
+          </p><p>
+            The <code class="literal">DATA DIRECTORY</code> option for
+            <a class="link" href="sql-syntax.html#create-table" title="13.1.20 CREATE TABLE Syntax"><code class="literal">CREATE TABLE</code></a> is supported on
+            Windows only for <code class="literal">InnoDB</code> tables, as
+            described in <a class="xref" href="innodb-storage-engine.html#tablespace-placing" title="15.6.3.6 Creating a Tablespace Outside of the Data Directory">Section 15.6.3.6, “Creating a Tablespace Outside of the Data Directory”</a>. For
+            <code class="literal">MyISAM</code> and other storage engines, the
+            <code class="literal">DATA DIRECTORY</code> and <code class="literal">INDEX
+            DIRECTORY</code> options for <a class="link" href="sql-syntax.html#create-table" title="13.1.20 CREATE TABLE Syntax"><code class="literal">CREATE
+            TABLE</code></a> are ignored on Windows and any other
+            platforms with a nonfunctional <code class="literal">realpath()</code>
+            call.
+          </p></li><li class="listitem"><p>
+            <span class="bold"><strong><a class="link" href="sql-syntax.html#drop-database" title="13.1.24 DROP DATABASE Syntax"><code class="literal">DROP
+            DATABASE</code></a></strong></span>
+          </p><p>
+            You cannot drop a database that is in use by another
+            session.
+          </p></li><li class="listitem"><p>
+            <span class="bold"><strong>Case-insensitive names</strong></span>
+          </p><p>
+            File names are not case-sensitive on Windows, so MySQL
+            database and table names are also not case-sensitive on
+            Windows. The only restriction is that database and table
+            names must be specified using the same case throughout a
+            given statement. See
+            <a class="xref" href="language-structure.html#identifier-case-sensitivity" title="9.2.2 Identifier Case Sensitivity">Section 9.2.2, “Identifier Case Sensitivity”</a>.
+          </p></li><li class="listitem"><p>
+            <span class="bold"><strong>Directory and file names</strong></span>
+          </p><p>
+            On Windows, MySQL Server supports only directory and file
+            names that are compatible with the current ANSI code pages.
+            For example, the following Japanese directory name will not
+            work in the Western locale (code page 1252):
+          </p><pre data-lang="ini" class="programlisting">
+datadir="C:/私たちのプロジェクトのデータ"
+</pre><p>
+            The same limitation applies to directory and file names
+            referred to in SQL statements, such as the data file path
+            name in <a class="link" href="sql-syntax.html#load-data" title="13.2.7 LOAD DATA Syntax"><code class="literal">LOAD DATA</code></a>.
+          </p></li><li class="listitem"><p>
+            <span class="bold"><strong>The <code class="literal">\</code> path name
+            separator character</strong></span>
+          </p><p>
+            Path name components in Windows are separated by the
+            <code class="literal">\</code> character, which is also the escape
+            character in MySQL. If you are using
+            <a class="link" href="sql-syntax.html#load-data" title="13.2.7 LOAD DATA Syntax"><code class="literal">LOAD DATA</code></a> or
+            <a class="link" href="sql-syntax.html#select-into" title="13.2.10.1 SELECT ... INTO Syntax"><code class="literal">SELECT ... INTO
+            OUTFILE</code></a>, use Unix-style file names with
+            <code class="literal">/</code> characters:
+          </p><pre data-lang="sql" class="programlisting">
+mysql&gt; <strong class="userinput"><code>LOAD DATA INFILE 'C:/tmp/skr.txt' INTO TABLE skr;</code></strong>
+mysql&gt; <strong class="userinput"><code>SELECT * INTO OUTFILE 'C:/tmp/skr.txt' FROM skr;</code></strong>
+</pre><p>
+            Alternatively, you must double the <code class="literal">\</code>
+            character:
+          </p><pre data-lang="sql" class="programlisting">
+mysql&gt; <strong class="userinput"><code>LOAD DATA INFILE 'C:\\tmp\\skr.txt' INTO TABLE skr;</code></strong>
+mysql&gt; <strong class="userinput"><code>SELECT * INTO OUTFILE 'C:\\tmp\\skr.txt' FROM skr;</code></strong>
+</pre></li><li class="listitem"><p>
+            <span class="bold"><strong>Problems with pipes</strong></span>
+          </p><p>
+            Pipes do not work reliably from the Windows command-line
+            prompt. If the pipe includes the character
+            <code class="literal">^Z</code> / <code class="literal">CHAR(24)</code>, Windows
+            thinks that it has encountered end-of-file and aborts the
+            program.
+          </p><p>
+            This is mainly a problem when you try to apply a binary log
+            as follows:
+          </p><pre data-lang="terminal" class="programlisting">
+C:\&gt; <strong class="userinput"><code>mysqlbinlog <em class="replaceable"><code>binary_log_file</code></em> | mysql --user=root</code></strong>
+</pre><p>
+            If you have a problem applying the log and suspect that it
+            is because of a <code class="literal">^Z</code> /
+            <code class="literal">CHAR(24)</code> character, you can use the
+            following workaround:
+          </p><pre data-lang="terminal" class="programlisting">
+C:\&gt; <strong class="userinput"><code>mysqlbinlog <em class="replaceable"><code>binary_log_file</code></em> --result-file=/tmp/bin.sql</code></strong>
+C:\&gt; <strong class="userinput"><code>mysql --user=root --execute "source /tmp/bin.sql"</code></strong>
+</pre><p>
+            The latter command also can be used to reliably read any SQL
+            file that may contain binary data.
+</p></li></ul>
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="copyright-footer">
+
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left"><a accesskey="p" href="error-handling.html">Prev</a></td>
+<td width="20%" align="center"><a accesskey="u" href="">Up</a></td>
+<td width="40%" align="right"> <a accesskey="n" href="indexes.html">Next</a></td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">Appendix B Errors, Error Codes, and Common Problems</td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td>
+<td width="40%" align="right" valign="top">Appendix D Indexes</td>
+</tr>
+</table>
+</div>
+</body>
+</html>
